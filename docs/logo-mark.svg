@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
-  <!-- Jotscope icon, 48/128 build. Indigo background fills the full canvas
-       (square, no corner radius) with a white knockout mark: magnifier framing
-       the three JWT segments, payload (middle bar) longest. Color-coded
-       segments live in the hero lockup (docs/logo.svg). -->
-  <rect width="128" height="128" fill="#6366f1"/>
+  <!-- Jotscope icon, 48/128 build. Full-bleed indigo app-tile (rounded, 0.25
+       radius ratio) with a white knockout mark: magnifier framing the three JWT
+       segments, payload (middle bar) longest. Color-coded segments live in the
+       hero lockup (docs/logo.svg). -->
+  <rect width="128" height="128" rx="32" fill="#6366f1"/>
   <line x1="76" y1="76" x2="99" y2="99" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
   <circle cx="53" cy="53" r="30" stroke="#fff" stroke-width="9"/>
   <rect x="39" y="44" width="24" height="6.5" rx="3.25" fill="#fff"/>
