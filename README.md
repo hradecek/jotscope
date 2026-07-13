@@ -133,22 +133,22 @@ Prefer raw bytes? Flip any panel to pretty-printed JSON (nested objects included
 <tr>
 <td align="center" valign="top">
 
+<strong>Visual</strong><br><br>
+
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/media/10-visual-dark.png">
   <img src="docs/media/10-visual.png" width="320" alt="Visual claim view">
 </picture>
 
-<br><strong>Visual</strong>
-
 </td>
 <td align="center" valign="top">
+
+<strong>JSON</strong><br><br>
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/media/10-json-toggle-dark.png">
   <img src="docs/media/10-json-toggle.png" width="320" alt="Raw JSON view">
 </picture>
-
-<br><strong>JSON</strong>
 
 </td>
 </tr>
