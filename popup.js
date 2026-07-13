@@ -1031,11 +1031,23 @@ const settingsBackBtn = document.getElementById('settings-back-btn');
 const mainContainer   = document.querySelector('.container');
 let fetchModeOnSettingsOpen = null;
 
-openSettingsBtn.addEventListener('click', () => {
+function openSettings() {
   refreshHistoryButtons();
   fetchModeOnSettingsOpen = getFetchKeysMode();
   mainContainer.classList.add('hidden');
   settingsView.classList.remove('hidden');
+}
+openSettingsBtn.addEventListener('click', openSettings);
+
+// Header version → open Settings and jump to the About section.
+function openAbout() {
+  openSettings();
+  const about = document.getElementById('about-section');
+  if (about) about.scrollIntoView({ block: 'start' });
+}
+appVersion.addEventListener('click', openAbout);
+appVersion.addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openAbout(); }
 });
 
 settingsBackBtn.addEventListener('click', () => {
@@ -1284,8 +1296,13 @@ clearHistoryBtn.addEventListener('click', () => {
 // ── Initialize ──────────────────────────────────────────────────────────────
 try {
   const manifest = chrome.runtime.getManifest();
-  if (manifest && manifest.version && appVersion) {
-    appVersion.textContent = `v${manifest.version}`;
+  const v = manifest && manifest.version;
+  if (v) {
+    if (appVersion) appVersion.textContent = `v${v}`;
+    const aboutVersion = document.getElementById('about-version');
+    if (aboutVersion) aboutVersion.textContent = `v${v}`;
+    const settingsVersion = document.querySelector('.settings-version');
+    if (settingsVersion) settingsVersion.textContent = `v${v} · offline · no telemetry`;
   }
 } catch (_) {}
 

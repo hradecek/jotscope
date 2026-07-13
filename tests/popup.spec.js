@@ -150,3 +150,34 @@ test('boolean claim uses the type color, not error red (Cognito email_verified)'
   await expect(key).toHaveClass(/boolean/);
   await expect(key).toHaveCSS('color', 'rgb(192, 38, 211)');   // --syntax-boolean magenta, not red
 });
+
+test('About section — manifest version, header-version navigation, and links', async () => {
+  const p = await openAndDecode('Google');   // the header version is present in every view
+
+  // The header version is a clickable affordance that jumps to About in Settings.
+  await p.click('#app-version');
+  await expect(p.locator('#settings-view')).toBeVisible();
+  await expect(p.locator('#about-section')).toBeVisible();
+
+  // Version is read from the manifest (not hardcoded).
+  const version = await p.evaluate(() => chrome.runtime.getManifest().version);
+  await expect(p.locator('#about-version')).toHaveText(`v${version}`);
+
+  // Link rows point at the right URLs and open in a new tab safely.
+  const repo = 'https://github.com/hradecek/jotscope';
+  const links = {
+    'View source': repo,
+    'Report an issue': `${repo}/issues/new`,
+    'Report a security issue': `${repo}/security/policy`,
+  };
+  await expect(p.locator('#about-section a.about-row')).toHaveCount(3);
+  for (const [label, href] of Object.entries(links)) {
+    const row = p.locator('#about-section a.about-row', { hasText: label });
+    await expect(row).toHaveAttribute('href', href);
+    await expect(row).toHaveAttribute('target', '_blank');
+    await expect(row).toHaveAttribute('rel', 'noopener noreferrer');
+  }
+
+  // License is an inline value, not a link.
+  await expect(p.locator('#about-section .about-row--static .about-row-value')).toHaveText('MIT');
+});
