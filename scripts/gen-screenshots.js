@@ -127,6 +127,8 @@ const STILLS = [
     setup: async p => { await decode(p, readToken('Keycloak')); await tab(p, 'payload'); } },
   { name: '09-verify-unsigned', sel: '#panel-verify',
     setup: async p => { await decode(p, readToken('alg: none')); await tab(p, 'verify'); } },
+  { name: '10-visual', sel: '#payload-claims-visual',
+    setup: async p => { await decode(p, readToken('Keycloak')); await tab(p, 'payload'); } },
   { name: '10-json-toggle', sel: '#payload-claims-json',
     setup: async p => {
       await decode(p, readToken('Keycloak')); await tab(p, 'payload');

@@ -126,13 +126,33 @@ Paste an OAuth callback URL or a blob of text and Jotscope extracts the tokens f
 
 ### Visual ↔ JSON, your call
 
-Prefer raw bytes? Flip any panel to pretty-printed JSON (nested objects included). Set your default in Settings.
+Prefer raw bytes? Flip any panel to pretty-printed JSON (nested objects included) — same token, two views. Set your default in Settings.
 
 <div align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/media/10-json-toggle-dark.png">
-    <img src="docs/media/10-json-toggle.png" width="420" alt="Raw JSON view of the payload">
-  </picture>
+<table>
+<tr>
+<td align="center" valign="top">
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/media/10-visual-dark.png">
+  <img src="docs/media/10-visual.png" width="320" alt="Visual claim view">
+</picture>
+
+<br><strong>Visual</strong>
+
+</td>
+<td align="center" valign="top">
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/media/10-json-toggle-dark.png">
+  <img src="docs/media/10-json-toggle.png" width="320" alt="Raw JSON view">
+</picture>
+
+<br><strong>JSON</strong>
+
+</td>
+</tr>
+</table>
 </div>
 
 ### History that stays out of your way
