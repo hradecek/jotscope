@@ -169,8 +169,9 @@ test('About section — manifest version, header-version navigation, and links',
     'View source': repo,
     'Report an issue': `${repo}/issues/new`,
     'Report a security issue': `${repo}/security/policy`,
+    'License': `${repo}/blob/main/LICENSE`,
   };
-  await expect(p.locator('#about-section a.about-row')).toHaveCount(3);
+  await expect(p.locator('#about-section a.about-row')).toHaveCount(4);
   for (const [label, href] of Object.entries(links)) {
     const row = p.locator('#about-section a.about-row', { hasText: label });
     await expect(row).toHaveAttribute('href', href);
@@ -178,6 +179,6 @@ test('About section — manifest version, header-version navigation, and links',
     await expect(row).toHaveAttribute('rel', 'noopener noreferrer');
   }
 
-  // License is an inline value, not a link.
-  await expect(p.locator('#about-section .about-row--static .about-row-value')).toHaveText('MIT');
+  // License links to the repo's LICENSE but keeps its "MIT" value visible.
+  await expect(p.locator('#about-section a.about-row', { hasText: 'License' }).locator('.about-row-value')).toHaveText('MIT');
 });
