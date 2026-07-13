@@ -17,7 +17,10 @@
 
 <br>
 
-<img src="docs/media/paste-decode.gif" width="420" alt="Paste a token and it decodes instantly">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/media/paste-decode-dark.gif">
+  <img src="docs/media/paste-decode.gif" width="420" alt="Paste a token and it decodes instantly">
+</picture>
 
 </div>
 
@@ -61,7 +64,10 @@ Every claim is colour-coded by type, standard claims carry hover/keyboard toolti
 Provider payloads like Keycloak's `realm_access` / `resource_access` or Firebase's `identities` render as a collapsible tree instead of a wall of JSON — recursive, any depth.
 
 <div align="center">
-  <img src="docs/media/nested-tree.gif" width="420" alt="Expanding a nested claim tree">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/media/nested-tree-dark.gif">
+    <img src="docs/media/nested-tree.gif" width="420" alt="Expanding a nested claim tree">
+  </picture>
 </div>
 
 ### Privileged roles, flagged
@@ -69,7 +75,10 @@ Provider payloads like Keycloak's `realm_access` / `resource_access` or Firebase
 Roles like `admin`, `superuser`, or any `*-admin` are tinted and bolded so a dangerous grant jumps out.
 
 <div align="center">
-  <img src="docs/media/05-privileged-role.png" width="300" alt="Privileged admin role highlighted">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/media/05-privileged-role-dark.png">
+    <img src="docs/media/05-privileged-role.png" width="300" alt="Privileged admin role highlighted">
+  </picture>
 </div>
 
 ### Live token lifetime
@@ -77,17 +86,20 @@ Roles like `admin`, `superuser`, or any `*-admin` are tinted and bolded so a dan
 A real-time countdown and an issued → expires progress bar — watch the status shift **Valid → Expiring → Expired** as the clock runs down.
 
 <div align="center">
-  <img src="docs/media/countdown.gif" width="420" alt="Token lifecycle: Valid → Expiring → Expired">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/media/countdown-dark.gif">
+    <img src="docs/media/countdown.gif" width="420" alt="Token lifecycle: Valid → Expiring → Expired">
+  </picture>
 </div>
 
 Every state is distinct — **Valid**, **Expiring soon**, **Expired**, **Not yet active**, and **No expiry**:
 
 <p align="center">
-  <img src="docs/media/08-status-valid.png" width="74" height="52" alt="Valid status">
-  <img src="docs/media/08-status-expiring.png" width="80" height="52" alt="Expiring soon status">
-  <img src="docs/media/08-status-expired.png" width="75" height="52" alt="Expired status">
-  <img src="docs/media/08-status-notyet.png" width="114" height="52" alt="Not yet active status">
-  <img src="docs/media/08-status-noexp.png" width="89" height="35" alt="No expiry status">
+  <picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/08-status-valid-dark.png"><img src="docs/media/08-status-valid.png" width="74" height="52" alt="Valid status"></picture>
+  <picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/08-status-expiring-dark.png"><img src="docs/media/08-status-expiring.png" width="80" height="52" alt="Expiring soon status"></picture>
+  <picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/08-status-expired-dark.png"><img src="docs/media/08-status-expired.png" width="75" height="52" alt="Expired status"></picture>
+  <picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/08-status-notyet-dark.png"><img src="docs/media/08-status-notyet.png" width="114" height="52" alt="Not yet active status"></picture>
+  <picture><source media="(prefers-color-scheme: dark)" srcset="docs/media/08-status-noexp-dark.png"><img src="docs/media/08-status-noexp.png" width="89" height="35" alt="No expiry status"></picture>
 </p>
 
 ### Signature verification
@@ -106,7 +118,10 @@ Clear, honest verification states — including a prominent amber warning for un
 Paste an OAuth callback URL or a blob of text and Jotscope extracts the tokens for you, with a picker when there's more than one.
 
 <div align="center">
-  <img src="docs/media/11-multi-token.png" width="420" alt="Multiple tokens detected from a callback URL">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/media/11-multi-token-dark.png">
+    <img src="docs/media/11-multi-token.png" width="420" alt="Multiple tokens detected from a callback URL">
+  </picture>
 </div>
 
 ### Visual ↔ JSON, your call
@@ -114,7 +129,10 @@ Paste an OAuth callback URL or a blob of text and Jotscope extracts the tokens f
 Prefer raw bytes? Flip any panel to pretty-printed JSON (nested objects included). Set your default in Settings.
 
 <div align="center">
-  <img src="docs/media/10-json-toggle.png" width="420" alt="Raw JSON view of the payload">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/media/10-json-toggle-dark.png">
+    <img src="docs/media/10-json-toggle.png" width="420" alt="Raw JSON view of the payload">
+  </picture>
 </div>
 
 ### History that stays out of your way
@@ -122,7 +140,10 @@ Prefer raw bytes? Flip any panel to pretty-printed JSON (nested objects included
 Recently decoded tokens are remembered locally, with a searchable, filterable full history and per-entry expiry status.
 
 <div align="center">
-  <img src="docs/media/12-history.png" width="420" alt="Searchable token history">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/media/12-history-dark.png">
+    <img src="docs/media/12-history.png" width="420" alt="Searchable token history">
+  </picture>
 </div>
 
 ### Yours to tune
@@ -130,7 +151,10 @@ Recently decoded tokens are remembered locally, with a searchable, filterable fu
 Timestamps in Local / UTC / Both, default tab & view, key-fetching mode, the "expiring soon" threshold, weak-algorithm flagging, and history retention.
 
 <div align="center">
-  <img src="docs/media/13-settings.png" width="420" alt="Settings panel">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/media/13-settings-dark.png">
+    <img src="docs/media/13-settings.png" width="420" alt="Settings panel">
+  </picture>
 </div>
 
 Plus **dark mode** — follows your system, and every screenshot above adapts automatically.

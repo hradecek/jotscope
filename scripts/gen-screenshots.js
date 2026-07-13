@@ -1,8 +1,8 @@
-// Generates the README visual assets — logo/icon PNGs, feature screenshots
-// (light + dark), and animated GIFs — by driving the real unpacked extension
-// with Playwright's Chromium. All images render from the SYNTHETIC tokens in
-// test-tokens.md (no real credentials), so the output is safe to commit and
-// fully reproducible.
+// Generates the README visual assets — logo/icon PNGs plus feature screenshots
+// and animated GIFs in BOTH light and dark themes — by driving the real
+// unpacked extension with Playwright's Chromium. All images render from the
+// SYNTHETIC tokens in test-tokens.md (no real credentials), so the output is
+// safe to commit and fully reproducible.
 //
 //   node scripts/gen-screenshots.js        (npm run gen:media regenerates tokens first)
 //
@@ -21,7 +21,8 @@ const MEDIA     = path.join(EXT, 'docs', 'media');
 const FRAMES    = path.join(MEDIA, '.frames');
 const ICONS     = path.join(EXT, 'icons');
 const FFMPEG    = process.env.FFMPEG || 'ffmpeg';
-const WIDTH     = 440;   // inside the popup's 420–500px clamp
+const WIDTH     = 440;                 // inside the popup's 420–500px clamp
+const sfx       = scheme => (scheme === 'dark' ? '-dark' : '');
 
 function readToken(nameSubstr) {
   const md = fs.readFileSync(TOKENS_MD, 'utf8');
@@ -57,7 +58,6 @@ async function launch(colorScheme, deviceScaleFactor = 1) {
   return { ctx, extId: new URL(sw.url()).host };
 }
 
-// A fresh popup page with cleared state (mirrors the test harness isolation).
 async function openClean(ctx, extId) {
   const page = await ctx.newPage();
   await page.setViewportSize({ width: WIDTH, height: 900 });
@@ -72,8 +72,7 @@ async function openClean(ctx, extId) {
 }
 
 // Like openClean, but with the page clock pinned to a fixed instant (ms) so
-// time-relative token states render deterministically. Clock must be installed
-// before navigation; it re-applies across the reload.
+// time-relative token states render deterministically.
 async function openCleanAt(ctx, extId, timeMs) {
   const page = await ctx.newPage();
   await page.setViewportSize({ width: WIDTH, height: 900 });
@@ -94,8 +93,7 @@ async function decode(page, token) {
   await page.waitForSelector('#payload-claims-visual', { state: 'visible' });
 }
 
-// Decode when the input may be hidden (already in the decoded view) — reopen
-// the input via the chip first. Used to stack several tokens into history.
+// Decode when the input may be hidden (already decoded) — reopen via the chip.
 async function decodeFresh(page, token) {
   if (!(await page.locator('#jwt-input').isVisible())) {
     await page.click('#token-chip');
@@ -119,58 +117,37 @@ async function shootClip(page, out, clip) {
   console.log('  ✓', out);
 }
 
-// ── Stills ──────────────────────────────────────────────────────────────────
-// Each entry: name, a setup(page) that leaves the popup in the target state,
-// the selector to capture, and which color schemes to render.
+// ── Stills (each rendered in both themes) ───────────────────────────────────
 const STILLS = [
-  { name: '01-empty-paste',      schemes: ['light', 'dark'], sel: '#paste-area',
-    setup: async () => {} },
-  { name: '02-decoded-overview', schemes: ['light', 'dark'], sel: '#decoded-view',
+  { name: '02-decoded-overview', sel: '#decoded-view',
     setup: async p => { await decode(p, readToken('Google')); await tab(p, 'payload'); } },
-  { name: '03-claims-visual',    schemes: ['light', 'dark'], sel: '#payload-claims-visual',
+  { name: '03-claims-visual', sel: '#payload-claims-visual',
     setup: async p => { await decode(p, readToken('Okta')); await tab(p, 'payload'); } },
-  { name: '04-nested-tree',      schemes: ['light'],         sel: '#payload-claims-visual',
+  { name: '05-privileged-role', sel: '#payload-claims-visual .claim-value-nested:has(.claim-chip.privileged)',
     setup: async p => { await decode(p, readToken('Keycloak')); await tab(p, 'payload'); } },
-  { name: '05-privileged-role',  schemes: ['light'],         sel: '#payload-claims-visual .claim-value-nested:has(.claim-chip.privileged)',
-    setup: async p => { await decode(p, readToken('Keycloak')); await tab(p, 'payload'); } },
-  { name: '09-verify-unsigned',  schemes: ['light', 'dark'], sel: '#panel-verify',
+  { name: '09-verify-unsigned', sel: '#panel-verify',
     setup: async p => { await decode(p, readToken('alg: none')); await tab(p, 'verify'); } },
-  { name: '10-json-toggle',      schemes: ['light'],         sel: '#payload-claims-json',
+  { name: '10-json-toggle', sel: '#payload-claims-json',
     setup: async p => {
       await decode(p, readToken('Keycloak')); await tab(p, 'payload');
       await p.click('.view-switch-btn[data-target="payload"][data-view="json"]');
       await p.waitForSelector('#payload-claims-json', { state: 'visible' });
     } },
-  { name: '13-settings',         schemes: ['light'],         sel: '#settings-view',
+  { name: '13-settings', sel: '#settings-view',
     setup: async p => { await p.click('#open-settings-btn'); await p.waitForSelector('#settings-view', { state: 'visible' }); } },
 ];
 
 async function stills(ctx, extId, scheme) {
-  for (const s of STILLS.filter(s => s.schemes.includes(scheme))) {
+  for (const s of STILLS) {
     const page = await openClean(ctx, extId);
-    try {
-      await s.setup(page);
-      const out = scheme === 'dark' ? `${s.name}-dark.png` : `${s.name}.png`;
-      await shoot(page, s.sel, out);
-    } finally { await page.close(); }
+    try { await s.setup(page); await shoot(page, s.sel, `${s.name}${sfx(scheme)}.png`); }
+    finally { await page.close(); }
   }
 }
 
-// Shots that need bespoke flows (light only).
-async function specialStills(ctx, extId) {
-  // 06 — tooltip on focus (the tip is a fixed-position overlay on <body>).
-  {
-    const page = await openClean(ctx, extId);
-    await decode(page, readToken('Okta')); await tab(page, 'payload');
-    const key = page.locator('#payload-claims-visual .claim-key.tooltip').first();
-    await key.focus();
-    const tip = page.locator('#tooltip-container.show');
-    await tip.waitFor({ state: 'visible' });
-    const box = await tip.boundingBox();
-    const bottom = Math.min(900, Math.ceil((box ? box.y + box.height : 320)) + 12);
-    await shootClip(page, '06-tooltip.png', { x: 0, y: 0, width: WIDTH, height: bottom });
-    await page.close();
-  }
+// Shots that need bespoke flows.
+async function specialStills(ctx, extId, scheme) {
+  const suffix = sfx(scheme);
 
   // 11 — multi-token detection from an OAuth-callback-style URL.
   {
@@ -179,7 +156,7 @@ async function specialStills(ctx, extId) {
     await page.fill('#jwt-input', blob);
     await page.locator('#jwt-input').press('Control+Enter');
     await page.waitForSelector('#token-selector:not(.hidden)');
-    await shoot(page, '#token-selector', '11-multi-token.png');
+    await shoot(page, '#token-selector', `11-multi-token${suffix}.png`);
     await page.close();
   }
 
@@ -189,36 +166,12 @@ async function specialStills(ctx, extId) {
     for (const t of ['Google', 'Okta', 'Keycloak']) { await decodeFresh(page, readToken(t)); }
     await page.click('#history-toggle-btn');
     await page.waitForSelector('#history-view', { state: 'visible' });
-    await shoot(page, '#history-view', '12-history.png');
+    await shoot(page, '#history-view', `12-history${suffix}.png`);
     await page.close();
   }
 }
 
-// The five lifetime states as uniform, crisp pill chips. Captured in a
-// dedicated 2× (retina) context and cropped to just the pill (#summary-status)
-// so every chip is the same height and sharp — the README sizes them by height.
-// The clock is pinned per token so short-lived states don't lapse before capture.
-async function statusPills() {
-  const { ctx, extId } = await launch('light', 2);   // 2× → crisp at natural display size
-  try {
-    const shots = [
-      ['Google',         'valid',    p => p.exp - 1800],  // 30 min left → Valid
-      ['Expiring soon',  'expiring', p => p.exp - 120],   // 2 min left (< threshold)
-      ['Expired',        'expired',  p => p.exp + 300],   // 5 min past expiry
-      ['Not yet active', 'notyet',   p => p.nbf - 60],    // activates in 60s
-      ['No expiry',      'noexp',    p => (p.iat || 0) + 60],  // no exp claim
-    ];
-    for (const [tokenName, suffix, at] of shots) {
-      const token = readToken(tokenName);
-      const page = await openCleanAt(ctx, extId, at(payloadOf(token)) * 1000);
-      await decode(page, token);
-      await shoot(page, '#summary-status-wrap', `08-status-${suffix}.png`);
-      await page.close();
-    }
-  } finally { await ctx.close(); }
-}
-
-// ── GIFs ──────────────────────────────────────────────────────────────────
+// ── GIFs (each rendered in both themes) ─────────────────────────────────────
 function assembleGif(name, fps, width) {
   const dir = path.join(FRAMES, name);
   const out = path.join(MEDIA, `${name}.gif`);
@@ -234,10 +187,12 @@ async function frame(page, name, i, clip) {
   await page.screenshot({ path: path.join(dir, `f${String(i).padStart(3, '0')}.png`), clip });
 }
 
-async function gifs(ctx, extId) {
+async function gifs(ctx, extId, scheme) {
+  const suffix = sfx(scheme);
+
   // A — paste → decode. Fixed page clip so every frame is the same size.
   {
-    const name = 'paste-decode';
+    const name = `paste-decode${suffix}`;
     const clip = { x: 0, y: 0, width: WIDTH, height: 540 };
     const page = await openClean(ctx, extId);
     let i = 0;
@@ -254,12 +209,9 @@ async function gifs(ctx, extId) {
     assembleGif(name, 2, WIDTH);
   }
 
-  // B — token lifecycle, time-lapsed. Start 8 min before expiry (Valid), then
-  // advance the fake clock ~40s per frame so the pill visibly transitions
-  // Valid → Expiring → Expired with the countdown and progress bar. The whole
-  // life compressed into ~9s at 2fps.
+  // B — token lifecycle, time-lapsed (Valid → Expiring → Expired) in ~9s.
   {
-    const name = 'countdown';
+    const name = `countdown${suffix}`;
     const token = readToken('Google');
     const start = (payloadOf(token).exp - 480) * 1000;
     const page = await openCleanAt(ctx, extId, start);
@@ -273,7 +225,7 @@ async function gifs(ctx, extId) {
 
   // C — expand a nested claim node.
   {
-    const name = 'nested-tree';
+    const name = `nested-tree${suffix}`;
     const page = await openClean(ctx, extId);
     await decode(page, readToken('Keycloak')); await tab(page, 'payload');
     const panel = await page.locator('#panel-payload').boundingBox();
@@ -292,7 +244,33 @@ async function gifs(ctx, extId) {
   }
 }
 
-// ── Logo & icon rasterization (vector → PNG via Chromium, transparent) ──────
+// ── Status pills — the five lifetime states, in both themes ─────────────────
+// Captured in a 2× (retina) context, cropped to the real status widget
+// (#summary-status-wrap: tinted box + label + relative-time line). The clock
+// is pinned per token so short-lived states don't lapse before capture.
+async function statusPills() {
+  const shots = [
+    ['Google',         'valid',    p => p.exp - 1800],  // 30 min left → Valid
+    ['Expiring soon',  'expiring', p => p.exp - 120],   // 2 min left (< threshold)
+    ['Expired',        'expired',  p => p.exp + 300],   // 5 min past expiry
+    ['Not yet active', 'notyet',   p => p.nbf - 60],    // activates in 60s
+    ['No expiry',      'noexp',    p => (p.iat || 0) + 60],  // no exp claim
+  ];
+  for (const scheme of ['light', 'dark']) {
+    const { ctx, extId } = await launch(scheme, 2);
+    try {
+      for (const [tokenName, state, at] of shots) {
+        const token = readToken(tokenName);
+        const page = await openCleanAt(ctx, extId, at(payloadOf(token)) * 1000);
+        await decode(page, token);
+        await shoot(page, '#summary-status-wrap', `08-status-${state}${sfx(scheme)}.png`);
+        await page.close();
+      }
+    } finally { await ctx.close(); }
+  }
+}
+
+// ── Logo & icons (vector → PNG via Chromium, transparent, theme-neutral) ────
 async function rasterize(ctx, svgPath, width, height, outPath, ink) {
   const svg = fs.readFileSync(svgPath, 'utf8');
   const page = await ctx.newPage();
@@ -326,27 +304,22 @@ async function main() {
   mkdirp(MEDIA); mkdirp(ICONS); mkdirp(FRAMES);
 
   // Logo + icons FIRST: the manifest references icons/*.png, so they must exist
-  // on disk before the extension context loads — otherwise Chrome rejects the
-  // extension and its service worker never registers. Use a plain browser (no
-  // extension) purely to rasterize the SVGs.
+  // before the extension context loads (or the service worker won't register).
   console.log('logo + icons');
   const rb = await chromium.launch();
   try { await logoAndIcons(await rb.newContext()); } finally { await rb.close(); }
 
   for (const scheme of ['light', 'dark']) {
-    console.log(`\n[${scheme}] stills`);
+    console.log(`\n[${scheme}] stills + gifs`);
     const { ctx, extId } = await launch(scheme);
     try {
       await stills(ctx, extId, scheme);
-      if (scheme === 'light') {
-        await specialStills(ctx, extId);
-        console.log('\n[light] gifs');
-        await gifs(ctx, extId);
-      }
+      await specialStills(ctx, extId, scheme);
+      await gifs(ctx, extId, scheme);
     } finally { await ctx.close(); }
   }
 
-  console.log('\nstatus pills (2×)');
+  console.log('\nstatus pills (2×, light + dark)');
   await statusPills();
 
   fs.rmSync(FRAMES, { recursive: true, force: true });
