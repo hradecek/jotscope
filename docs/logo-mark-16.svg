@@ -1,10 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none">
-  <!-- Jotscope icon, 16px build. Self-grounded indigo tile (matches the in-app
-       header tile) so it reads identically on light and dark toolbars. White
-       knockout glyph, bold strokes, two bars — survives the pixel budget. -->
+  <!-- Jotscope icon, 16px build. Full-bleed self-grounded indigo tile (matches
+       the in-app header tile) so it reads identically on light and dark
+       toolbars. White knockout glyph, bold strokes, two bars. -->
   <rect width="16" height="16" rx="4" fill="#6366f1"/>
-  <line x1="9.5" y1="9.5" x2="12.4" y2="12.4" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/>
-  <circle cx="6.6" cy="6.6" r="4" stroke="#fff" stroke-width="1.5"/>
-  <rect x="4.4" y="5.15" width="4.3" height="1.3" rx="0.65" fill="#fff"/>
-  <rect x="4.4" y="7.35" width="2.9" height="1.3" rx="0.65" fill="#fff"/>
+  <g transform="translate(-1.6 -1.6) scale(1.2)">
+    <line x1="9.5" y1="9.5" x2="12.4" y2="12.4" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/>
+    <circle cx="6.6" cy="6.6" r="4" stroke="#fff" stroke-width="1.5"/>
+    <rect x="4.4" y="5.15" width="4.3" height="1.3" rx="0.65" fill="#fff"/>
+    <rect x="4.4" y="7.35" width="2.9" height="1.3" rx="0.65" fill="#fff"/>
+  </g>
 </svg>

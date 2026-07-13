@@ -1,10 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
   <!-- Jotscope icon, 32px build (also the @2x for the 16 slot on HiDPI).
-       Indigo tile + white knockout glyph; three bars, payload (middle) longest. -->
+       Full-bleed indigo tile + white knockout glyph; three bars, payload longest. -->
   <rect width="32" height="32" rx="8" fill="#6366f1"/>
-  <line x1="19" y1="19" x2="25" y2="25" stroke="#fff" stroke-width="2.8" stroke-linecap="round"/>
-  <circle cx="13.2" cy="13.2" r="8" stroke="#fff" stroke-width="2.6"/>
-  <rect x="8.8" y="10" width="9" height="2.2" rx="1.1" fill="#fff"/>
-  <rect x="8.8" y="13.4" width="11.5" height="2.2" rx="1.1" fill="#fff"/>
-  <rect x="8.8" y="16.8" width="7" height="2.2" rx="1.1" fill="#fff"/>
+  <g transform="translate(-3.2 -3.2) scale(1.2)">
+    <line x1="19" y1="19" x2="25" y2="25" stroke="#fff" stroke-width="2.8" stroke-linecap="round"/>
+    <circle cx="13.2" cy="13.2" r="8" stroke="#fff" stroke-width="2.6"/>
+    <rect x="8.8" y="10" width="9" height="2.2" rx="1.1" fill="#fff"/>
+    <rect x="8.8" y="13.4" width="11.5" height="2.2" rx="1.1" fill="#fff"/>
+    <rect x="8.8" y="16.8" width="7" height="2.2" rx="1.1" fill="#fff"/>
+  </g>
 </svg>
