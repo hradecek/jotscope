@@ -44,7 +44,7 @@ Paste a token and get the whole picture instantly — who it's for, whether it's
 <div align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/media/02-decoded-overview-dark.png">
-    <img src="docs/media/02-decoded-overview.png" width="420" alt="Decoded token overview with status and lifetime">
+    <img src="docs/media/02-decoded-overview.png" width="360" alt="Decoded token overview with status and lifetime">
   </picture>
 </div>
 
@@ -55,7 +55,7 @@ Every claim is colour-coded by type, standard claims carry hover/keyboard toolti
 <div align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/media/03-claims-visual-dark.png">
-    <img src="docs/media/03-claims-visual.png" width="420" alt="Visual claim view with tooltips, chips and type colours">
+    <img src="docs/media/03-claims-visual.png" width="360" alt="Visual claim view with tooltips, chips and type colours">
   </picture>
 </div>
 
@@ -66,7 +66,7 @@ Provider payloads like Keycloak's `realm_access` / `resource_access` or Firebase
 <div align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/media/nested-tree-dark.gif">
-    <img src="docs/media/nested-tree.gif" width="420" alt="Expanding a nested claim tree">
+    <img src="docs/media/nested-tree.gif" width="360" alt="Expanding a nested claim tree">
   </picture>
 </div>
 
