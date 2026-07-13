@@ -22,7 +22,13 @@
   <img src="docs/media/paste-decode.gif" width="420" alt="Paste a token and it decodes instantly">
 </picture>
 
+<br>
+
+**[Features](#features)** · **[Install](#install-unpacked)** · **[Privacy](#privacy--permissions)** · **[Development](#development--tests)**
+
 </div>
+
+> **Status:** Pre-release. Installable now as an unpacked extension ([see below](#install-unpacked)); a Chrome Web Store listing is planned. Feedback and issues welcome.
 
 ---
 
@@ -30,12 +36,21 @@
 
 - 🔒 **Private by design** — decoding never touches the network. The *only* outbound request the extension can make is an **opt-in** fetch of an issuer's public keys for signature verification (off by default).
 - ⚡ **Instant** — auto-decodes the moment you paste; finds tokens buried in URLs and OAuth callbacks.
-- 🧠 **Actually readable** — a visual claim view with plain-English tooltips, type colours, chips, and a collapsible tree for nested claims.
+- 🧠 **Actually readable** — a visual claim view with plain-English tooltips, type colors, chips, and a collapsible tree for nested claims.
 - 🪶 **Zero runtime dependencies, no build step** — pure vanilla JS. The source *is* what ships, so it's trivial to audit.
 
 ---
 
 ## Features
+
+- **Instant decode** — paste and it's decoded; pulls tokens out of URLs & OAuth-callback text.
+- **Readable claims** — type colors, plain-English tooltips (RFC 7519 + OIDC + vendor), chips, and a collapsible tree for nested claims.
+- **Privileged-role flagging** — `admin` / `superuser` / `*-admin` stand out.
+- **Live lifetime** — real-time countdown and a Valid → Expiring → Expired status.
+- **Signature verification** — distinct states, including an `alg: none` warning; opt-in JWKS fetch.
+- **Visual ↔ JSON** per panel · **searchable history** · **settings** (timestamps, defaults, thresholds) · **dark mode**.
+
+The rest of this section shows each in action.
 
 ### Decode at a glance
 
@@ -50,12 +65,12 @@ Paste a token and get the whole picture instantly — who it's for, whether it's
 
 ### A claim view you can actually read
 
-Every claim is colour-coded by type, standard claims carry hover/keyboard tooltips (RFC 7519 + OIDC + vendor extensions), `scope`/`groups`/roles render as chips, and timestamps show both the exact date and a relative time.
+Every claim is color-coded by type, standard claims carry hover/keyboard tooltips (RFC 7519 + OIDC + vendor extensions), `scope`/`groups`/roles render as chips, and timestamps show both the exact date and a relative time.
 
 <div align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/media/03-claims-visual-dark.png">
-    <img src="docs/media/03-claims-visual.png" width="360" alt="Visual claim view with tooltips, chips and type colours">
+    <img src="docs/media/03-claims-visual.png" width="360" alt="Visual claim view with tooltips, chips and type colors">
   </picture>
 </div>
 
@@ -183,7 +198,7 @@ Plus **dark mode** — follows your system, and every screenshot above adapts au
 
 ## Install (unpacked)
 
-Primary target: Chromium-based browsers (Chrome, Edge, Brave), minimum Chrome 116.
+Primary target: Chromium-based browsers (Chrome, Edge, Brave), minimum Chrome 116. Firefox isn't supported yet — a port is under consideration.
 
 1. Download or clone this repository.
 2. Open `chrome://extensions/` (or `edge://extensions/`).
@@ -198,15 +213,22 @@ Primary target: Chromium-based browsers (Chrome, Edge, Brave), minimum Chrome 11
 Your tokens never leave your browser.
 
 - No analytics, no tracking, **zero runtime dependencies**.
-- History and settings live only in your browser's `localStorage`.
+- **The clipboard is read only when you ask** — when you click the *Paste* button or press Ctrl/Cmd+V into the input. Jotscope never reads the clipboard on open, in the background, or on a timer, and nothing read is transmitted or stored beyond the local decode.
+- **History & settings are stored only in your browser's `localStorage`** — never synced or sent anywhere. History keeps the **full** recently-decoded tokens so you can revisit them (capped at 150, de-duplicated); clear it, remove expired entries, or turn history off entirely in Settings.
 - Decoding is 100% local. **Signature verification can optionally fetch the issuer's public JWKS** — the single outbound request the extension can make. It's **opt-in** (Settings → *Fetch keys* → *Automatic*; default *Never*), sends no token data, and only GETs the issuer's well-known JWKS URL.
 
-| Permission      | Why                                          |
-|-----------------|----------------------------------------------|
-| `storage`       | Save history & settings locally              |
-| `clipboardRead` | Auto-decode when you paste                   |
+| Permission      | Why                                                                                       |
+|-----------------|-------------------------------------------------------------------------------------------|
+| `storage`       | Save history & settings locally (`localStorage`)                                          |
+| `clipboardRead` | Read the clipboard **only** on an explicit paste (Paste button / Ctrl+V) — never automatically |
 
 No host permissions, no `<all_urls>`.
+
+---
+
+## Security
+
+Found a security issue? Please **report it privately** — open a GitHub Security Advisory via the repository's **Security → Report a vulnerability** tab, rather than a public issue. Details in [SECURITY.md](SECURITY.md).
 
 ---
 
