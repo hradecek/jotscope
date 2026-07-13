@@ -289,10 +289,17 @@ async function rasterize(ctx, svgPath, width, height, outPath, ink) {
 }
 
 async function logoAndIcons(ctx) {
-  const markSvg = path.join(EXT, 'docs', 'logo-mark.svg');
   const logoSvg = path.join(EXT, 'docs', 'logo.svg');
-  for (const size of [16, 48, 128]) {
-    await rasterize(ctx, markSvg, size, size, path.join(ICONS, `icon${size}.png`));
+  // Each size rasterizes from a PURPOSE-BUILT source, not one file rescaled:
+  // 16 = simplified mono two-bar, 32 = fattened three-color, 48/128 = detailed.
+  const iconSrc = {
+    16:  path.join(EXT, 'docs', 'logo-mark-16.svg'),
+    32:  path.join(EXT, 'docs', 'logo-mark-32.svg'),
+    48:  path.join(EXT, 'docs', 'logo-mark.svg'),
+    128: path.join(EXT, 'docs', 'logo-mark.svg'),
+  };
+  for (const [size, src] of Object.entries(iconSrc)) {
+    await rasterize(ctx, src, +size, +size, path.join(ICONS, `icon${size}.png`));
   }
   await rasterize(ctx, logoSvg, 960, 240, path.join(MEDIA, 'hero-logo.png'), '#0f172a');
   await rasterize(ctx, logoSvg, 960, 240, path.join(MEDIA, 'hero-logo-dark.png'), '#f8f9fa');

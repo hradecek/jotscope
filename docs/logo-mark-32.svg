@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Jotscope mark, 32px toolbar build (also the @2x for the 16 slot on HiDPI).
+       Three segments survive here, but only fattened: bolder strokes, thicker
+       bars, payload (middle) longest — matching a real token. Not rescaled. -->
+  <line x1="19.7" y1="19.7" x2="27" y2="27" stroke="#6366f1" stroke-width="3.4" stroke-linecap="round"/>
+  <circle cx="13" cy="13" r="9.5" stroke="#6366f1" stroke-width="3"/>
+  <rect x="7.5" y="9.4" width="10" height="2.6" rx="1.3" fill="#6366f1"/>
+  <rect x="7.5" y="13.2" width="13" height="2.6" rx="1.3" fill="#047857"/>
+  <rect x="7.5" y="17" width="8" height="2.6" rx="1.3" fill="#c026d3"/>
+</svg>
