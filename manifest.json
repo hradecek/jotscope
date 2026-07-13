@@ -1,12 +1,12 @@
 {
   "manifest_version": 3,
-  "name": "Jotscope",
+  "name": "Jotscope — JWT Decoder & Inspector",
   "version": "1.0.0",
   "description": "Instantly decode JWT tokens with 100% offline privacy. No external API calls, no tracking.",
   "minimum_chrome_version": "116",
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Jotscope",
+    "default_title": "Jotscope — JWT Decoder & Inspector",
     "default_icon": {
       "16": "icons/icon16.png",
       "32": "icons/icon32.png",
