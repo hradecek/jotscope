@@ -1725,18 +1725,6 @@ body {
   cursor: pointer;
 }
 
-.setting-select {
-  flex-shrink: 0;
-  font-family: inherit;
-  font-size: 13px;
-  color: var(--text-secondary);
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-primary);
-  border-radius: 6px;
-  padding: 4px 8px;
-  cursor: pointer;
-}
-
 /* ── History view (in-popup full list) ───────────────────────────────────── */
 .history-view {
   display: flex;
@@ -1818,12 +1806,16 @@ body {
   border-bottom-color: var(--accent-primary);
 }
 
-.history-issuer {
-  margin-left: auto;
+/* Reusable themed dropdown — used by the History issuer filter and the
+   Settings selects so they share one look (and theme correctly in dark mode). */
+.dropdown {
   position: relative;
+  flex-shrink: 0;
 }
 
-.history-issuer-btn {
+.history-issuer { margin-left: auto; }   /* push the issuer filter to the row's right edge */
+
+.dropdown-btn {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -1835,9 +1827,9 @@ body {
   cursor: pointer;
 }
 
-.history-issuer-btn:hover { color: var(--text-primary); }
+.dropdown-btn:hover { color: var(--text-primary); }
 
-.history-issuer-menu {
+.dropdown-menu {
   position: absolute;
   top: 100%;
   right: 0;
@@ -1846,6 +1838,7 @@ body {
   max-width: 260px;
   max-height: 220px;
   overflow-y: auto;
+  margin-top: 4px;
   padding: 4px;
   background: var(--bg-secondary);
   border: 1px solid var(--border-primary);
@@ -1853,7 +1846,10 @@ body {
   box-shadow: var(--menu-shadow);
 }
 
-.history-issuer-option {
+/* Flip above the trigger when there isn't room below (e.g. bottom of Settings). */
+.dropdown-menu--up { top: auto; bottom: 100%; margin-top: 0; margin-bottom: 4px; }
+
+.dropdown-option {
   padding: 7px 10px;
   border-radius: 6px;
   font-size: 13px;
@@ -1864,8 +1860,8 @@ body {
   text-overflow: ellipsis;
 }
 
-.history-issuer-option:hover { background: var(--bg-hover); }
-.history-issuer-option.selected { color: var(--accent-primary); }
+.dropdown-option:hover { background: var(--bg-hover); }
+.dropdown-option.selected { color: var(--accent-primary); }
 
 .history-list { display: flex; flex-direction: column; }
 

@@ -961,7 +961,7 @@ function updateHistoryIssuers() {
   if (!hosts.includes(historyIssuerFilter)) historyIssuerFilter = 'all';
   const opts = [{ value: 'all', label: 'All issuers' }].concat(hosts.map(h => ({ value: h, label: h })));
   historyIssuerMenu.innerHTML = opts.map(o =>
-    `<div class="history-issuer-option ${o.value === historyIssuerFilter ? 'selected' : ''}" role="option" data-value="${escapeHtml(o.value)}">${escapeHtml(o.label)}</div>`
+    `<div class="dropdown-option ${o.value === historyIssuerFilter ? 'selected' : ''}" role="option" data-value="${escapeHtml(o.value)}">${escapeHtml(o.label)}</div>`
   ).join('');
   historyIssuerLabel.textContent = historyIssuerFilter === 'all' ? 'Issuer' : historyIssuerFilter;
 }
@@ -1009,7 +1009,7 @@ historyIssuerBtn.addEventListener('click', e => {
 });
 
 historyIssuerMenu.addEventListener('click', e => {
-  const opt = e.target.closest('.history-issuer-option');
+  const opt = e.target.closest('.dropdown-option');
   if (!opt) return;
   historyIssuerFilter = opt.dataset.value;
   closeIssuerMenu();
@@ -1120,9 +1120,6 @@ flagAlgToggle.addEventListener('keydown', e => {
 });
 syncFlagAlgToggle();
 
-// ── Setting: Expiring soon threshold ──────────────────────────────────────
-const expiringSelect = document.getElementById('expiring-threshold');
-
 // Re-apply status-dependent rendering for the loaded token (no re-decode).
 function rerenderCurrentToken() {
   if (currentToken && currentHeader && currentPayload) {
@@ -1133,10 +1130,83 @@ function rerenderCurrentToken() {
   renderRecent();
 }
 
-expiringSelect.value = String(getExpiringThreshold());
-expiringSelect.addEventListener('change', () => {
-  setExpiringThreshold(parseInt(expiringSelect.value, 10) || 300);
-  rerenderCurrentToken();
+// ── Reusable themed dropdown ───────────────────────────────────────────────
+// Same look/behaviour as the History issuer filter; used for the Settings
+// selects so all three are consistent (and theme correctly in dark mode).
+function createDropdown(el, { ariaLabel, options, getValue, onSelect, labelFor }) {
+  el.classList.add('dropdown');
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'dropdown-btn';
+  btn.setAttribute('aria-haspopup', 'listbox');
+  btn.setAttribute('aria-expanded', 'false');
+  if (ariaLabel) btn.setAttribute('aria-label', ariaLabel);
+  const labelEl = document.createElement('span');
+  btn.appendChild(labelEl);
+  btn.insertAdjacentHTML('beforeend',
+    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+  const menu = document.createElement('div');
+  menu.className = 'dropdown-menu hidden';
+  menu.setAttribute('role', 'listbox');
+  el.append(btn, menu);
+
+  const opts = () => (typeof options === 'function' ? options() : options);
+  const val  = () => (typeof getValue === 'function' ? getValue() : getValue);
+  const syncLabel = () => {
+    const v = val();
+    const o = opts().find(x => x.value === v);
+    labelEl.textContent = labelFor ? labelFor(v, o) : (o ? o.label : '');
+  };
+  const render = () => {
+    const v = val();
+    menu.innerHTML = opts().map(o =>
+      `<div class="dropdown-option ${o.value === v ? 'selected' : ''}" role="option" data-value="${escapeHtml(String(o.value))}">${escapeHtml(o.label)}</div>`
+    ).join('');
+    syncLabel();
+  };
+  const close = () => {
+    menu.classList.add('hidden');
+    menu.classList.remove('dropdown-menu--up');
+    btn.setAttribute('aria-expanded', 'false');
+  };
+  const open = () => {
+    render();
+    menu.classList.remove('hidden');
+    btn.setAttribute('aria-expanded', 'true');
+    const r = btn.getBoundingClientRect();   // flip up if it would clip the bottom edge
+    menu.classList.toggle('dropdown-menu--up', r.bottom + menu.offsetHeight + 8 > window.innerHeight);
+  };
+
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    if (menu.classList.contains('hidden')) open(); else close();
+  });
+  menu.addEventListener('click', e => {
+    const opt = e.target.closest('.dropdown-option');
+    if (!opt) return;
+    onSelect(opt.dataset.value);
+    close();
+    render();
+  });
+  document.addEventListener('click', e => { if (!el.contains(e.target)) close(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+
+  render();
+  return { refresh: render, close };
+}
+
+// ── Setting: Expiring soon threshold ──────────────────────────────────────
+createDropdown(document.getElementById('expiring-threshold-dropdown'), {
+  ariaLabel: 'Expiring soon threshold',
+  options: [
+    { value: '60',   label: '1 min' },
+    { value: '300',  label: '5 min' },
+    { value: '900',  label: '15 min' },
+    { value: '1800', label: '30 min' },
+    { value: '3600', label: '1 hour' },
+  ],
+  getValue: () => String(getExpiringThreshold()),
+  onSelect: v => { setExpiringThreshold(parseInt(v, 10) || 300); rerenderCurrentToken(); },
 });
 
 // ── Setting: Display (timestamps + default tab) ───────────────────────────
@@ -1161,9 +1231,17 @@ function wireSegmented(el, getVal, setVal, onChange) {
 wireSegmented(document.getElementById('timestamp-seg'), getTimestampMode, setTimestampMode, rerenderCurrentToken);
 wireSegmented(document.getElementById('default-view-seg'), getDefaultView, setDefaultView, () => { if (currentPayload) applyDefaultView(); });
 
-const defaultTabSelect = document.getElementById('default-tab-select');
-defaultTabSelect.value = getDefaultTab();
-defaultTabSelect.addEventListener('change', () => setDefaultTab(defaultTabSelect.value));
+createDropdown(document.getElementById('default-tab-dropdown'), {
+  ariaLabel: 'Default tab after decode',
+  options: [
+    { value: 'header',    label: 'Header' },
+    { value: 'payload',   label: 'Payload' },
+    { value: 'signature', label: 'Signature' },
+    { value: 'verify',    label: 'Verify' },
+  ],
+  getValue: getDefaultTab,
+  onSelect: v => setDefaultTab(v),
+});
 
 // ── Setting: history actions (Remove expired / Clear history) ─────────────
 const removeExpiredBtn  = document.getElementById('remove-expired-btn');

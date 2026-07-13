@@ -339,13 +339,7 @@
           <p class="setting-name">Expiring soon threshold</p>
           <p class="setting-desc">How soon before expiry to flag a token</p>
         </div>
-        <select id="expiring-threshold" class="setting-select" aria-label="Expiring soon threshold">
-          <option value="60">1 min</option>
-          <option value="300">5 min</option>
-          <option value="900">15 min</option>
-          <option value="1800">30 min</option>
-          <option value="3600">1 hour</option>
-        </select>
+        <div id="expiring-threshold-dropdown" class="dropdown"></div>
       </div>
     </section>
 
@@ -368,12 +362,7 @@
       </div>
       <div class="setting-row">
         <p class="setting-name">Default tab after decode</p>
-        <select id="default-tab-select" class="setting-select" aria-label="Default tab after decode">
-          <option value="header">Header</option>
-          <option value="payload">Payload</option>
-          <option value="signature">Signature</option>
-          <option value="verify">Verify</option>
-        </select>
+        <div id="default-tab-dropdown" class="dropdown"></div>
       </div>
     </section>
   </div>
@@ -403,12 +392,12 @@
       <button class="hfilter selected" data-filter="all" type="button">All</button>
       <button class="hfilter" data-filter="valid" type="button">Valid</button>
       <button class="hfilter" data-filter="expired" type="button">Expired</button>
-      <div id="history-issuer" class="history-issuer">
-        <button id="history-issuer-btn" class="history-issuer-btn" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="Filter by issuer">
+      <div id="history-issuer" class="history-issuer dropdown">
+        <button id="history-issuer-btn" class="dropdown-btn" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="Filter by issuer">
           <span id="history-issuer-label">Issuer</span>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
-        <div id="history-issuer-menu" class="history-issuer-menu hidden" role="listbox"></div>
+        <div id="history-issuer-menu" class="dropdown-menu hidden" role="listbox"></div>
       </div>
     </div>
 
