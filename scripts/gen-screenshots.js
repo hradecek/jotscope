@@ -290,8 +290,9 @@ async function rasterize(ctx, svgPath, width, height, outPath, ink) {
 
 async function logoAndIcons(ctx) {
   const logoSvg = path.join(EXT, 'docs', 'logo.svg');
-  // Each size rasterizes from a PURPOSE-BUILT source, not one file rescaled:
-  // 16 = simplified mono two-bar, 32 = fattened three-color, 48/128 = detailed.
+  // Each size rasterizes from a PURPOSE-BUILT source, not one file rescaled.
+  // All are self-grounded indigo tiles (white knockout glyph) matching the
+  // in-app header tile: 16 = two-bar, 32/48/128 = three-bar (payload longest).
   const iconSrc = {
     16:  path.join(EXT, 'docs', 'logo-mark-16.svg'),
     32:  path.join(EXT, 'docs', 'logo-mark-32.svg'),
