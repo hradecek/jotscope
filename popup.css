@@ -1560,17 +1560,16 @@ body {
 
 /* ── Settings view (in-popup, toggled from the header gear) ──────────────── */
 .settings-view {
-  padding: 12px;
+  padding: 10px 0 8px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
 }
 
 .settings-header {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 2px 4px 0;
+  padding: 0 16px 10px;
 }
 
 .settings-back {
@@ -1589,12 +1588,11 @@ body {
 .settings-title { font-size: 15px; font-weight: 500; color: var(--text-heading); }
 .settings-version { margin-left: auto; font-size: 12px; color: var(--text-muted); }
 
-/* Each section is its own card (grouped-list style) */
+/* Sections share one continuous surface, split by full-width hairline dividers
+   (matches the History view — no per-section cards). */
 .settings-section {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-primary);
-  border-radius: 12px;
-  padding: 8px 16px 10px;
+  padding: 6px 16px 12px;
+  border-top: 1px solid var(--border-primary);
 }
 
 .settings-section-label {
