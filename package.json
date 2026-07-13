@@ -1,0 +1,31 @@
+{
+  "name": "jotscope",
+  "version": "1.0.0",
+  "description": "Decode, inspect, and verify JSON Web Tokens locally in your browser — privacy-focused, zero runtime dependencies.",
+  "main": "background.js",
+  "scripts": {
+    "pretest": "node scripts/gen-test-tokens.js",
+    "test": "playwright test",
+    "gen:tokens": "node scripts/gen-test-tokens.js",
+    "gen:media": "node scripts/gen-test-tokens.js && node scripts/gen-screenshots.js"
+  },
+  "keywords": [
+    "jwt",
+    "json-web-token",
+    "jwt-decoder",
+    "chrome-extension",
+    "oauth",
+    "oidc",
+    "jwks",
+    "developer-tools"
+  ],
+  "author": "Ivo Hrádek <ivohradek@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hradecek/jotscope.git"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.61.1"
+  }
+}

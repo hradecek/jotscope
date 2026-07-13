@@ -1,0 +1,356 @@
+/* JWT Decoder - Theme Variables */
+/* Dark mode first (matches current default via prefers-color-scheme) */
+
+:root {
+  /* Let native controls (select dropdowns, scrollbars, the arrow) follow the theme */
+  color-scheme: light dark;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  --font-mono: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+}
+
+/* Light mode (default for prefers-color-scheme: light) */
+:root {
+  --bg-primary: #f8f9fa;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f1f5f9;
+  --bg-input: #f8fafc;
+  --bg-input-focus: #ffffff;
+  --bg-hover: #f1f5f9;
+
+  --text-primary: #1a1a2e;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+  --text-heading: #1a1a2e;
+
+  --border-primary: #e2e8f0;
+  --border-secondary: #cbd5e1;
+  --border-focus: #6366f1;
+
+  --accent-primary: #6366f1;
+  --accent-primary-bg: #eef2ff;
+  --accent-hover: #4f46e5;
+  --accent-active: #4338ca;
+
+  --color-green: #059669;
+  --color-green-bg: #d1fae5;
+  --color-red: #dc2626;
+  --color-red-bg: #fef2f2;
+  --color-red-border: #fecaca;
+  --color-yellow: #d97706;
+  --color-yellow-bg: #fef3c7;
+
+  --badge-valid-color: #059669;
+  --badge-valid-bg: #d1fae5;
+  --badge-expired-color: #dc2626;
+  --badge-expired-bg: #fef2f2;
+  --badge-expiring-color: #d97706;
+  --badge-expiring-bg: #fef3c7;
+  --badge-notyet-color: #1d4ed8;
+  --badge-notyet-bg: #dbeafe;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+  --focus-ring: 0 0 0 3px rgba(99, 102, 241, 0.1);
+
+  --diff-added-bg: rgba(34, 197, 94, 0.08);
+  --diff-removed-bg: rgba(239, 68, 68, 0.08);
+  --diff-changed-bg: rgba(234, 179, 8, 0.08);
+  --diff-match-opacity: 0.5;
+
+  /* Red focus ring (invalid input) */
+  --focus-ring-red: 0 0 0 3px rgba(239, 68, 68, 0.1);
+
+  /* Syntax highlighting */
+  --syntax-key: #6d28d9;
+  --syntax-string: #047857;
+  --syntax-number: #1d4ed8;
+  --syntax-boolean: #c026d3;
+  --syntax-null: #6b7280;
+
+  /* Token selector (blue info box) */
+  --token-sel-bg: #eff6ff;
+  --token-sel-border: #93c5fd;
+  --token-sel-header-bg: #dbeafe;
+  --token-sel-title: #1e40af;
+  --token-sel-hint: #3b82f6;
+  --token-sel-item-border: #bfdbfe;
+  --token-sel-hover: #dbeafe;
+  --token-sel-source: #1e40af;
+  --token-sel-decode-bg: #f0fdf4;
+  --token-sel-decode-border: #86efac;
+  --token-sel-decode-hover: #dcfce7;
+  --token-sel-decode-source: #166534;
+  --token-sel-expired-source: #dc2626;
+
+  /* Diff line colors */
+  --diff-line-same: #64748b;
+  --diff-line-added-bg: #d1fae5;
+  --diff-line-added-color: #047857;
+  --diff-line-removed-bg: #fee2e2;
+  --diff-line-removed-color: #dc2626;
+  --diff-line-changed-old-bg: #fef3c7;
+  --diff-line-changed-old-color: #b45309;
+  --diff-line-changed-new-bg: #dbeafe;
+  --diff-line-changed-new-color: #1d4ed8;
+
+  /* Compare table row backgrounds */
+  --compare-diff-row-bg: #fefce8;
+  --compare-added-row-bg: #f0fdf4;
+  --compare-removed-row-bg: #fef2f2;
+  --compare-claim-name: #7c3aed;
+
+  /* Value comparison highlights */
+  --val-same-color: #475569;
+  --val-diff-bg: #fef3c7;
+  --val-diff-color: #b45309;
+  --val-only-bg: #dbeafe;
+  --val-only-color: #1d4ed8;
+
+  /* Status card colors */
+  --status-valid-bg: #f0fdf4;
+  --status-valid-border: #bbf7d0;
+  --status-valid-value: #16a34a;
+  --status-valid-label: #86efac;
+  --status-expired-bg: #fef2f2;
+  --status-expired-border: #fecaca;
+  --status-expired-value: #dc2626;
+  --status-expired-label: #fca5a5;
+  --status-notyet-bg: #fffbeb;
+  --status-notyet-border: #fde68a;
+  --status-notyet-value: #d97706;
+  --status-notyet-label: #fcd34d;
+  --status-expiring-bg: #fff7ed;
+  --status-expiring-border: #fed7aa;
+  --status-expiring-value: #ea580c;
+  --status-expiring-label: #fdba74;
+
+  /* Tooltip */
+  --tooltip-bg: #1a1a2e;
+  --tooltip-color: #ffffff;
+  --tooltip-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+
+  /* Copyable hover */
+  --copyable-hover-bg: rgba(99, 102, 241, 0.1);
+  --copyable-hover-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+  --copyable-copied-bg: rgba(5, 150, 105, 0.15);
+  --copyable-copied-shadow: 0 0 0 2px rgba(5, 150, 105, 0.3);
+
+  /* Button states (primary) */
+  --btn-primary-hover: #4f46e5;
+  --btn-primary-active: #4338ca;
+
+  /* Multi-token expired */
+  --multi-expired-header-bg: #fef2f2;
+  --multi-expired-header-border: #fecaca;
+  --multi-expired-title: #dc2626;
+
+  /* Error message */
+  --error-bg: #fef2f2;
+  --error-color: #dc2626;
+  --error-border: #fecaca;
+
+  /* Verification badges */
+  --verify-valid-bg: #d1fae5;
+  --verify-valid-color: #047857;
+  --verify-invalid-bg: #fee2e2;
+  --verify-invalid-color: #dc2626;
+  --verify-result-error-bg: #fef3c7;
+  --verify-result-error-color: #b45309;
+
+  /* JWKS status */
+  --jwks-success-bg: #d1fae5;
+  --jwks-success-color: #047857;
+  --jwks-error-bg: #fee2e2;
+  --jwks-error-color: #dc2626;
+
+  /* Copied state */
+  --copied-bg: #d1fae5;
+  --copied-border: #6ee7b7;
+  --copied-color: #047857;
+  --copied-btn-bg: #059669;
+
+  /* Overflow menu */
+  --menu-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --bg-tertiary: #334155;
+    --bg-input: #0f172a;
+    --bg-input-focus: #1e293b;
+    --bg-hover: #334155;
+
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --text-heading: #f1f5f9;
+
+    --border-primary: #334155;
+    --border-secondary: #475569;
+    --border-focus: #818cf8;
+
+    --accent-primary: #818cf8;
+    --accent-primary-bg: #312e81;
+    --accent-hover: #6366f1;
+    --accent-active: #4f46e5;
+
+    --color-green: #6ee7b7;
+    --color-green-bg: #064e3b;
+    --color-red: #fca5a5;
+    --color-red-bg: #1c0808;
+    --color-red-border: #991b1b;
+    --color-yellow: #fde68a;
+    --color-yellow-bg: #78350f;
+
+    --badge-valid-color: #6ee7b7;
+    --badge-valid-bg: #064e3b;
+    --badge-expired-color: #fca5a5;
+    --badge-expired-bg: #371010;
+    --badge-expiring-color: #fde68a;
+    --badge-expiring-bg: #78350f;
+    --badge-notyet-color: #93c5fd;
+    --badge-notyet-bg: #1e3a8a;
+
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
+    --focus-ring: 0 0 0 3px rgba(129, 140, 248, 0.15);
+
+    --diff-added-bg: rgba(34, 197, 94, 0.1);
+    --diff-removed-bg: rgba(239, 68, 68, 0.1);
+    --diff-changed-bg: rgba(234, 179, 8, 0.1);
+    --diff-match-opacity: 0.4;
+
+    /* Red focus ring (invalid input) */
+    --focus-ring-red: 0 0 0 3px rgba(220, 38, 38, 0.15);
+
+    /* Syntax highlighting */
+    --syntax-key: #a78bfa;
+    --syntax-string: #34d399;
+    --syntax-number: #60a5fa;
+    --syntax-boolean: #e879f9;
+    --syntax-null: #9ca3af;
+
+    /* Token selector (blue info box) */
+    --token-sel-bg: #1e3a5f;
+    --token-sel-border: #3b82f6;
+    --token-sel-header-bg: #1e3a8a;
+    --token-sel-title: #93c5fd;
+    --token-sel-hint: #60a5fa;
+    --token-sel-item-border: #1e40af;
+    --token-sel-hover: #1e3a8a;
+    --token-sel-source: #93c5fd;
+    --token-sel-decode-bg: #14532d;
+    --token-sel-decode-border: #22c55e;
+    --token-sel-decode-hover: #166534;
+    --token-sel-decode-source: #86efac;
+    --token-sel-expired-source: #fecaca;
+
+    /* Diff line colors */
+    --diff-line-same: #94a3b8;
+    --diff-line-added-bg: #064e3b;
+    --diff-line-added-color: #6ee7b7;
+    --diff-line-removed-bg: #1c0808;
+    --diff-line-removed-color: #fecaca;
+    --diff-line-changed-old-bg: #451a03;
+    --diff-line-changed-old-color: #fdba74;
+    --diff-line-changed-new-bg: #1e3a8a;
+    --diff-line-changed-new-color: #93c5fd;
+
+    /* Compare table row backgrounds */
+    --compare-diff-row-bg: #422006;
+    --compare-added-row-bg: #052e16;
+    --compare-removed-row-bg: #1c0808;
+    --compare-claim-name: #c4b5fd;
+
+    /* Value comparison highlights */
+    --val-same-color: #cbd5e1;
+    --val-diff-bg: #451a03;
+    --val-diff-color: #fdba74;
+    --val-only-bg: #1e3a8a;
+    --val-only-color: #93c5fd;
+
+    /* Status card colors */
+    --status-valid-bg: #052e16;
+    --status-valid-border: #166534;
+    --status-valid-value: #4ade80;
+    --status-valid-label: #22c55e;
+    --status-expired-bg: #1c0808;
+    --status-expired-border: #991b1b;
+    --status-expired-value: #fca5a5;
+    --status-expired-label: #f87171;
+    --status-notyet-bg: #271300;
+    --status-notyet-border: #78350f;
+    --status-notyet-value: #fbbf24;
+    --status-notyet-label: #d97706;
+    --status-expiring-bg: #1c0a00;
+    --status-expiring-border: #9a3412;
+    --status-expiring-value: #fb923c;
+    --status-expiring-label: #ea580c;
+
+    /* Tooltip */
+    --tooltip-bg: #334155;
+    --tooltip-color: #f1f5f9;
+    --tooltip-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+
+    /* Copyable hover */
+    --copyable-hover-bg: rgba(129, 140, 248, 0.15);
+    --copyable-hover-shadow: 0 0 0 2px rgba(129, 140, 248, 0.25);
+    --copyable-copied-bg: rgba(110, 231, 183, 0.15);
+    --copyable-copied-shadow: 0 0 0 2px rgba(110, 231, 183, 0.3);
+
+    /* Button states (primary) */
+    --btn-primary-hover: #818cf8;
+    --btn-primary-active: #4f46e5;
+
+    /* Multi-token expired */
+    --multi-expired-header-bg: #450a0a;
+    --multi-expired-header-border: #dc2626;
+    --multi-expired-title: #fecaca;
+
+    /* Error message */
+    --error-bg: #1c0808;
+    --error-color: #fecaca;
+    --error-border: #991b1b;
+
+    /* Verification badges */
+    --verify-valid-bg: #064e3b;
+    --verify-valid-color: #6ee7b7;
+    --verify-invalid-bg: #371010;
+    --verify-invalid-color: #fecaca;
+    --verify-result-error-bg: #451a03;
+    --verify-result-error-color: #fdba74;
+
+    /* JWKS status */
+    --jwks-success-bg: #064e3b;
+    --jwks-success-color: #6ee7b7;
+    --jwks-error-bg: #1c0808;
+    --jwks-error-color: #fecaca;
+
+    /* Copied state */
+    --copied-bg: #064e3b;
+    --copied-border: #059669;
+    --copied-color: #6ee7b7;
+    --copied-btn-bg: #059669;
+
+    /* Overflow menu */
+    --menu-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  }
+}
+
+/* Base reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+}

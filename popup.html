@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jotscope</title>
+  <link rel="stylesheet" href="styles/theme.css">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="header-brand">
+        <div class="app-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="6" cy="6" r="2.5" stroke="currentColor" stroke-width="1.5" fill="none"/>
+            <path d="M7.7 7.7 L13 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M11 11 L12 12 M12.5 9.5 L13.5 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="header-title">
+          <h1>Jotscope</h1>
+          <p id="header-subtitle-version" class="header-subtitle">
+            <span id="app-version">v2.0.0</span>
+            <span class="dot-sep">&middot;</span>
+            <span>offline</span>
+            <span class="dot-sep">&middot;</span>
+            <span>no telemetry</span>
+          </p>
+          <p id="header-subtitle-context" class="header-subtitle hidden"></p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="history-toggle-btn" class="btn-icon" title="Show recent tokens" aria-label="Show recent tokens" aria-expanded="false">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5" fill="none"/>
+            <path d="M8 4.5 V8 L10.5 9.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <button id="open-settings-btn" class="btn-icon" title="Settings" aria-label="Open settings">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Empty / paste state -->
+    <div id="paste-area" class="task-area">
+      <div class="input-section">
+        <label for="jwt-input" class="sr-only">JWT Token Input</label>
+        <textarea
+          id="jwt-input"
+          class="is-empty"
+          placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+          spellcheck="false"
+          autocomplete="off"
+          aria-label="Paste a JWT token or URL containing tokens"
+        ></textarea>
+        <p id="input-hint" class="input-hint">No valid JWT token found</p>
+        <div id="empty-state" class="empty-state">
+          <div class="empty-state-icon" aria-hidden="true">
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="15" cy="15" r="6" stroke="currentColor" stroke-width="2" fill="none"/>
+              <path d="M19.5 19.5 L34 34" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M28 28 L31 31 M32 24 L34.5 26.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <p class="empty-state-text">Paste a JWT to decode</p>
+          <div class="empty-state-shortcuts">
+            <kbd class="shortcut-badge" id="paste-btn" role="button" tabindex="0"><span class="shortcut-mod">Ctrl</span><span class="shortcut-plus">+</span>V Paste</kbd>
+          </div>
+          <a href="#" id="load-sample-btn" class="empty-state-link">Load sample token</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent (only visible on the empty state) -->
+    <div id="recent-section" class="recent-section hidden">
+      <div class="recent-header">
+        <span class="recent-label">Recent</span>
+        <a href="#" id="recent-view-all" class="recent-view-all">View all</a>
+      </div>
+      <div id="recent-list" class="recent-list"></div>
+    </div>
+
+    <!-- Multi-token selector -->
+    <div id="token-selector" class="token-selector hidden">
+      <div class="token-selector-header">
+        <span class="token-selector-title">Multiple tokens detected</span>
+        <span class="token-selector-hint">Select one to decode</span>
+      </div>
+      <div id="token-list" class="token-list"></div>
+    </div>
+
+    <!-- Error message -->
+    <div id="error-message" class="error-message hidden"></div>
+
+    <!-- Decoded view -->
+    <div id="decoded-view" class="decoded-view hidden">
+      <!-- Collapsed token chip -->
+      <div id="token-chip" class="token-chip" role="button" tabindex="0" aria-label="Edit or replace the loaded token">
+        <span class="chip-icon" aria-hidden="true">&lt;/&gt;</span>
+        <span id="chip-token" class="chip-token"></span>
+        <button id="chip-clear-btn" class="chip-action chip-close" type="button" aria-label="Clear token">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 3 L9 9 M9 3 L3 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Algorithm security warning (alg:none / unrecognized) -->
+      <div id="alg-warning" class="alg-warning hidden" role="alert">
+        <svg class="alg-warning-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M10.3 4.3 2.5 18a2 2 0 0 0 1.7 3h15.6a2 2 0 0 0 1.7-3L13.7 4.3a2 2 0 0 0-3.4 0z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M12 9v4M12 17h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span id="alg-warning-text"></span>
+      </div>
+
+      <!-- Summary card -->
+      <div class="summary-card">
+        <div class="summary-head">
+          <div class="summary-head-text">
+            <h2 id="summary-name" class="summary-name"></h2>
+            <p id="summary-meta" class="summary-meta"></p>
+            <div class="summary-badges">
+              <span id="summary-alg" class="alg-pill"></span>
+              <span id="summary-org" class="org-pill hidden">
+                <svg class="org-pill-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path d="M4 21h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                  <path d="M6 21V5.5A1.5 1.5 0 0 1 7.5 4h9A1.5 1.5 0 0 1 18 5.5V21" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                  <path d="M9.5 9h5M9.5 13h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                </svg>
+                <span id="summary-org-value" class="org-pill-value"></span>
+              </span>
+            </div>
+          </div>
+          <div id="summary-status-wrap" class="summary-status-wrap">
+            <span id="summary-status" class="status-pill"><span class="dot" aria-hidden="true"></span><span class="label"></span></span>
+            <span id="summary-status-sub" class="summary-status-sub"></span>
+          </div>
+        </div>
+        <div id="lifetime" class="lifetime">
+          <div class="lifetime-cols">
+            <div class="lifetime-col">
+              <span class="lifetime-col-label">ISSUED</span>
+              <span id="lifetime-iat" class="lifetime-col-value"></span>
+            </div>
+            <div class="lifetime-col">
+              <span id="lifetime-exp-label" class="lifetime-col-label">EXPIRES</span>
+              <span id="lifetime-exp" class="lifetime-col-value"></span>
+            </div>
+            <div class="lifetime-col lifetime-col-end">
+              <span class="lifetime-col-label">DURATION</span>
+              <span id="lifetime-duration" class="lifetime-col-value"></span>
+            </div>
+          </div>
+          <div class="lifetime-bar-row">
+            <div class="lifetime-bar"><div id="lifetime-bar-fill" class="lifetime-bar-fill"></div></div>
+            <span id="lifetime-pct" class="lifetime-pct"></span>
+          </div>
+        </div>
+        <div id="no-expiry-callout" class="no-expiry-callout hidden">
+          <div class="no-expiry-row">
+            <span class="no-expiry-icon" aria-hidden="true">&#9888;</span>
+            <span class="no-expiry-text">
+              <strong>No expiry.</strong> This token has no <code>exp</code> claim. Valid until revoked.
+            </span>
+          </div>
+          <div id="no-expiry-iat" class="no-expiry-iat"></div>
+        </div>
+      </div>
+
+      <!-- Tabs + panels card -->
+      <div class="panels-card">
+      <!-- Tabs -->
+      <div class="tabs" role="tablist">
+        <button class="tab active" role="tab" data-tab="header" aria-selected="true">
+          <span>Header</span><span id="tab-count-header" class="tab-count"></span>
+        </button>
+        <button class="tab" role="tab" data-tab="payload" aria-selected="false">
+          <span>Payload</span><span id="tab-count-payload" class="tab-count"></span>
+        </button>
+        <button class="tab" role="tab" data-tab="signature" aria-selected="false">
+          <span>Signature</span>
+        </button>
+        <button class="tab" role="tab" data-tab="verify" aria-selected="false">
+          <svg class="tab-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M7 1 L12 3 V7 C12 10 9.5 12.5 7 13 C4.5 12.5 2 10 2 7 V3 L7 1Z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
+          </svg>
+          <span>Verify</span>
+        </button>
+      </div>
+
+      <!-- Tab panels -->
+      <section id="panel-header" class="tab-panel active" role="tabpanel">
+        <div class="panel-toolbar">
+          <div class="view-switch" role="tablist" aria-label="View mode">
+            <button class="view-switch-btn active" data-view="visual" data-target="header" aria-pressed="true">
+              <span aria-hidden="true">&#x2261;</span> Visual
+            </button>
+            <button class="view-switch-btn" data-view="json" data-target="header" aria-pressed="false">
+              <span aria-hidden="true">{ }</span> JSON
+            </button>
+          </div>
+          <button class="btn-copy-json" data-target="header" type="button">
+            <svg class="btn-icon-inline" width="13" height="13" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2" stroke="currentColor" stroke-width="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> Copy JSON
+          </button>
+        </div>
+        <div id="header-claims-visual" class="claims-visual"></div>
+        <pre id="header-claims-json" class="claims-json hidden"></pre>
+      </section>
+
+      <section id="panel-payload" class="tab-panel" role="tabpanel" hidden>
+        <div class="panel-toolbar">
+          <div class="view-switch" role="tablist" aria-label="View mode">
+            <button class="view-switch-btn active" data-view="visual" data-target="payload" aria-pressed="true">
+              <span aria-hidden="true">&#x2261;</span> Visual
+            </button>
+            <button class="view-switch-btn" data-view="json" data-target="payload" aria-pressed="false">
+              <span aria-hidden="true">{ }</span> JSON
+            </button>
+          </div>
+          <button class="btn-copy-json" data-target="payload" type="button">
+            <svg class="btn-icon-inline" width="13" height="13" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2" stroke="currentColor" stroke-width="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> Copy JSON
+          </button>
+        </div>
+        <div id="payload-claims-visual" class="claims-visual"></div>
+        <pre id="payload-claims-json" class="claims-json hidden"></pre>
+      </section>
+
+      <section id="panel-signature" class="tab-panel" role="tabpanel" hidden>
+        <div class="signature-label">SIGNATURE</div>
+        <div id="signature-value" class="signature-value"></div>
+        <div id="signature-warning" class="alg-warning warn hidden" role="alert">
+          <svg class="alg-warning-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M10.3 4.3 2.5 18a2 2 0 0 0 1.7 3h15.6a2 2 0 0 0 1.7-3L13.7 4.3a2 2 0 0 0-3.4 0z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            <path d="M12 9v4M12 17h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>This token has no signature. Anyone can alter its contents — a server must never accept it.</span>
+        </div>
+      </section>
+
+      <section id="panel-verify" class="tab-panel" role="tabpanel" hidden>
+        <div id="verify-checks" class="verify-checks"></div>
+        <div id="verify-callout" class="verify-callout hidden">
+          <div class="verify-callout-title" id="verify-callout-title"></div>
+          <p class="verify-callout-body" id="verify-callout-body"></p>
+          <div id="jwks-fetch-block">
+            <label for="jwks-url-input" class="verify-input-label">JWKS URL<span class="verify-info tooltip" data-tooltip="Fetching JWKS contacts the token's issuer. Automatic fetching is off by default — enable it in Settings, or fetch here." role="img" aria-label="About key fetching" tabindex="0"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 11.5v4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 8h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span></label>
+            <div class="verify-input-row">
+              <input type="text" id="jwks-url-input" placeholder="https://example.com/.well-known/jwks.json" aria-label="JWKS URL for fetching public keys" />
+              <button id="fetch-jwks-btn" class="btn-secondary" type="button">Fetch</button>
+            </div>
+          </div>
+          <div id="jwks-status" class="jwks-status hidden"></div>
+        </div>
+      </section>
+      </div>
+    </div>
+
+    <!-- Sticky bottom action bar -->
+    <div id="bottom-bar" class="bottom-bar hidden">
+      <button id="copy-bearer-btn" class="bottom-btn" type="button">
+        <svg class="btn-icon-inline" width="13" height="13" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2" stroke="currentColor" stroke-width="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> Copy Bearer
+      </button>
+      <button id="copy-curl-btn" class="bottom-btn" type="button">
+        <span aria-hidden="true">&lt;/&gt;</span> cURL
+      </button>
+    </div>
+  </div>
+
+  <!-- Settings view (in-popup; toggled from the header gear) -->
+  <div id="settings-view" class="settings-view hidden">
+    <header class="settings-header">
+      <button id="settings-back-btn" class="settings-back" type="button" aria-label="Back">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M19 12H5M5 12l6-6M5 12l6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <span class="settings-title">Settings</span>
+      <span class="settings-version">v2.0.0 &middot; offline &middot; no telemetry</span>
+    </header>
+
+    <section class="settings-section">
+      <p class="settings-section-label">PRIVACY AND HISTORY</p>
+      <div class="setting-row">
+        <div class="setting-text">
+          <p class="setting-name">Keep history</p>
+          <p class="setting-desc">Recently decoded tokens on the home screen</p>
+        </div>
+        <span id="toggle-keep-history" class="toggle on" role="switch" aria-checked="true" tabindex="0"><span class="toggle-knob"></span></span>
+      </div>
+      <p class="setting-note">
+        <svg class="setting-note-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M10.3 4.3 2.5 18a2 2 0 0 0 1.7 3h15.6a2 2 0 0 0 1.7-3L13.7 4.3a2 2 0 0 0-3.4 0z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M12 9v4M12 17h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Turning this off also clears tokens already stored on this device.</span>
+      </p>
+      <div class="setting-block">
+        <div class="setting-actions">
+          <button id="remove-expired-btn" class="btn-secondary" type="button">Remove expired</button>
+          <button id="clear-history-btn" class="btn-danger" type="button">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span id="clear-history-label">Clear history</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="settings-section">
+      <p class="settings-section-label">VERIFICATION</p>
+      <div class="setting-block">
+        <p class="setting-name">Fetch keys from issuer</p>
+        <div class="segmented" id="fetch-keys-seg" role="group">
+          <span class="seg" data-mode="never">Never</span>
+          <span class="seg" data-mode="automatic">Automatic</span>
+        </div>
+        <p class="setting-desc">Fetching JWKS contacts the token's issuer. Everything else stays local.</p>
+      </div>
+    </section>
+
+    <section class="settings-section">
+      <p class="settings-section-label">SECURITY WARNINGS</p>
+      <div class="setting-row">
+        <div class="setting-text">
+          <p class="setting-name">Flag alg: none and weak algorithms</p>
+          <p class="setting-desc">Warns on unsigned or downgraded tokens</p>
+        </div>
+        <span id="toggle-flag-alg" class="toggle on" role="switch" aria-checked="true" tabindex="0"><span class="toggle-knob"></span></span>
+      </div>
+      <div class="setting-row">
+        <div class="setting-text">
+          <p class="setting-name">Expiring soon threshold</p>
+          <p class="setting-desc">How soon before expiry to flag a token</p>
+        </div>
+        <select id="expiring-threshold" class="setting-select" aria-label="Expiring soon threshold">
+          <option value="60">1 min</option>
+          <option value="300">5 min</option>
+          <option value="900">15 min</option>
+          <option value="1800">30 min</option>
+          <option value="3600">1 hour</option>
+        </select>
+      </div>
+    </section>
+
+    <section class="settings-section">
+      <p class="settings-section-label">DISPLAY</p>
+      <div class="setting-row">
+        <p class="setting-name">Timestamps</p>
+        <div class="segmented" id="timestamp-seg" role="group">
+          <span class="seg" data-mode="local">Local</span>
+          <span class="seg" data-mode="utc">UTC</span>
+          <span class="seg" data-mode="both">Both</span>
+        </div>
+      </div>
+      <div class="setting-row">
+        <p class="setting-name">Default view</p>
+        <div class="segmented" id="default-view-seg" role="group">
+          <span class="seg" data-mode="visual">Visual</span>
+          <span class="seg" data-mode="json">JSON</span>
+        </div>
+      </div>
+      <div class="setting-row">
+        <p class="setting-name">Default tab after decode</p>
+        <select id="default-tab-select" class="setting-select" aria-label="Default tab after decode">
+          <option value="header">Header</option>
+          <option value="payload">Payload</option>
+          <option value="signature">Signature</option>
+          <option value="verify">Verify</option>
+        </select>
+      </div>
+    </section>
+  </div>
+
+  <!-- History view (in-popup; full list with search/filter) -->
+  <div id="history-view" class="history-view hidden">
+    <header class="history-header">
+      <button id="history-back-btn" class="settings-back" type="button" aria-label="Back">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M19 12H5M5 12l6-6M5 12l6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <span class="settings-title">History</span>
+      <span id="history-count" class="history-count"></span>
+      <button id="history-clear-all" class="history-clear-all" type="button">Clear all</button>
+    </header>
+
+    <div class="history-search">
+      <svg class="history-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/>
+        <path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      <input id="history-search-input" type="text" placeholder="Search issuer, kid, or claim value" spellcheck="false" autocomplete="off" aria-label="Search history" />
+    </div>
+
+    <div class="history-filters" role="group" aria-label="Filter history">
+      <button class="hfilter selected" data-filter="all" type="button">All</button>
+      <button class="hfilter" data-filter="valid" type="button">Valid</button>
+      <button class="hfilter" data-filter="expired" type="button">Expired</button>
+      <div id="history-issuer" class="history-issuer">
+        <button id="history-issuer-btn" class="history-issuer-btn" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="Filter by issuer">
+          <span id="history-issuer-label">Issuer</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div id="history-issuer-menu" class="history-issuer-menu hidden" role="listbox"></div>
+      </div>
+    </div>
+
+    <div id="history-list" class="history-list"></div>
+
+    <div class="history-footer">
+      <span id="history-expired-count" class="history-expired-count"></span>
+      <a href="#" id="history-remove-expired" class="link-accent">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Remove expired
+      </a>
+    </div>
+  </div>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

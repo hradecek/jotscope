@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <!-- Jotscope mark: a magnifying glass framing the three JWT segments
+       (header · payload · signature) in the app's own syntax palette. -->
+  <line x1="83" y1="83" x2="106" y2="106" stroke="#6366f1" stroke-width="13" stroke-linecap="round"/>
+  <circle cx="52" cy="52" r="40" stroke="#6366f1" stroke-width="8"/>
+  <rect x="33" y="41" width="38" height="6.5" rx="3.25" fill="#6366f1"/>
+  <rect x="33" y="52.5" width="30" height="6.5" rx="3.25" fill="#047857"/>
+  <rect x="33" y="64" width="21" height="6.5" rx="3.25" fill="#c026d3"/>
+</svg>
