@@ -19,7 +19,10 @@ You never edit version numbers or the changelog by hand.
    - creates the git tag `vX.Y.Z`,
    - publishes the GitHub Release with notes,
    - builds the store zip (`npm run build:zip`) and attaches it to the release,
-   - uploads & publishes to the Chrome Web Store *(only once the secrets below are set)*.
+   - uploads the new version to the Chrome Web Store as a **draft** *(only once the secrets below are set)*.
+4. **Publish manually.** Open the [Web Store dashboard](https://chrome.google.com/webstore/devconsole),
+   review the uploaded draft, and click **Submit for review**. The current
+   version stays live until Google approves the new one.
 
 Build the package locally anytime with `npm run build:zip` → `dist/jotscope.zip`
 (an allowlist of just the runtime files — no docs, tests, or scripts).
@@ -40,6 +43,8 @@ See the [Chrome Web Store API docs](https://developer.chrome.com/docs/webstore/u
 for generating the OAuth client and refresh token. The upload uses
 [`chrome-webstore-upload-cli`](https://github.com/fregante/chrome-webstore-upload-cli).
 
-> `--auto-publish` sends the new version straight to review and publishes on
-> approval. To stage a draft instead (publish manually in the dashboard), drop
-> that flag in `.github/workflows/release-please.yml`.
+> The workflow uploads a **draft only** (no `--auto-publish`), so you always
+> get a final look before submitting for review. To fully automate instead,
+> add `--auto-publish` to the upload step in
+> `.github/workflows/release-please.yml` — it will then submit for review and
+> publish on approval with no manual step.
