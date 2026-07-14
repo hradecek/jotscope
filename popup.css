@@ -204,8 +204,29 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-yellow);
   line-height: 0;
+}
+
+/* Brand mark: the magnifier framing the three JWT segments (header/payload/signature). */
+.empty-state-icon .es-stroke { stroke: var(--accent-primary); }
+.empty-state-icon .es-b1 { fill: var(--accent-primary); }
+.empty-state-icon .es-b2 { fill: var(--syntax-string); }
+.empty-state-icon .es-b3 { fill: var(--syntax-boolean); }
+
+/* One-shot "equalizer settle": the segment bars spring to their resting widths
+   when the paste screen appears, then hold static. Scaling is anchored to each
+   bar's left edge. Disabled for users who prefer reduced motion. */
+.empty-state-icon .es-bar { transform-box: fill-box; transform-origin: left center; }
+.empty-state-icon .es-b1 { animation: es-eq1 0.60s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.empty-state-icon .es-b2 { animation: es-eq2 0.66s cubic-bezier(0.22, 1, 0.36, 1) 0.04s both; }
+.empty-state-icon .es-b3 { animation: es-eq3 0.58s cubic-bezier(0.22, 1, 0.36, 1) 0.08s both; }
+@keyframes es-eq1 { 0% { transform: scaleX(0.32); } 42% { transform: scaleX(1); } 70% { transform: scaleX(0.74); } 100% { transform: scaleX(1); } }
+@keyframes es-eq2 { 0% { transform: scaleX(0.55); } 46% { transform: scaleX(0.90); } 74% { transform: scaleX(0.52); } 100% { transform: scaleX(1); } }
+@keyframes es-eq3 { 0% { transform: scaleX(0.22); } 50% { transform: scaleX(1); } 78% { transform: scaleX(0.60); } 100% { transform: scaleX(1); } }
+@media (prefers-reduced-motion: reduce) {
+  .empty-state-icon .es-b1,
+  .empty-state-icon .es-b2,
+  .empty-state-icon .es-b3 { animation: none; }
 }
 
 .empty-state-text {

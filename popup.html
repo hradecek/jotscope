@@ -63,10 +63,12 @@
         <p id="input-hint" class="input-hint">No valid JWT token found</p>
         <div id="empty-state" class="empty-state">
           <div class="empty-state-icon" aria-hidden="true">
-            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="15" cy="15" r="6" stroke="currentColor" stroke-width="2" fill="none"/>
-              <path d="M19.5 19.5 L34 34" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              <path d="M28 28 L31 31 M32 24 L34.5 26.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <svg class="es-mark" width="46" height="46" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <line class="es-stroke" x1="82" y1="82" x2="105" y2="105" stroke-width="11" stroke-linecap="round"/>
+              <circle class="es-stroke" cx="55" cy="55" r="38" stroke-width="9"/>
+              <rect class="es-bar es-b1" x="38" y="44" width="30" height="7" rx="3.5"/>
+              <rect class="es-bar es-b2" x="38" y="55.5" width="40" height="7" rx="3.5"/>
+              <rect class="es-bar es-b3" x="38" y="67" width="24" height="7" rx="3.5"/>
             </svg>
           </div>
           <p class="empty-state-text">Paste a JWT to decode</p>
