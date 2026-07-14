@@ -3,7 +3,11 @@ name: release-please
 # Watches main and maintains a "release PR" that bumps the version
 # (package.json + manifest.json) and updates CHANGELOG.md from Conventional
 # Commit messages. Merging that PR tags the release and publishes a GitHub
-# Release. Config lives in release-please-config.json + .release-please-manifest.json.
+# Release. Config: release-please-config.json + .release-please-manifest.json.
+#
+# When a release is cut, the `publish` job (same run — so it works with the
+# default GITHUB_TOKEN) builds the store zip, attaches it to the GitHub
+# Release, and, if the Chrome Web Store secrets are set, uploads & publishes it.
 on:
   push:
     branches: [main]
@@ -15,7 +19,45 @@ permissions:
 jobs:
   release-please:
     runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
     steps:
       - uses: googleapis/release-please-action@v4
+        id: release
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+
+  publish:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created == 'true' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      TAG: ${{ needs.release-please.outputs.tag_name }}
+      # Chrome Web Store API credentials — add these four as repo secrets to
+      # enable auto-publish (see RELEASING.md). Until then the store step is
+      # skipped and the release still gets the built zip attached.
+      EXTENSION_ID: ${{ secrets.CWS_EXTENSION_ID }}
+      CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
+      CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
+      REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Build the Web Store package
+        run: npm run build:zip
+      - name: Attach the zip to the GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cp dist/jotscope.zip "jotscope-${TAG}.zip"
+          gh release upload "$TAG" "jotscope-${TAG}.zip" --clobber
+      - name: Upload & publish to the Chrome Web Store
+        if: env.CLIENT_ID != ''
+        run: npx --yes chrome-webstore-upload-cli@3 upload --source dist/jotscope.zip --auto-publish

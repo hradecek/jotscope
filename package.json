@@ -7,7 +7,8 @@
     "pretest": "node scripts/gen-test-tokens.js",
     "test": "playwright test",
     "gen:tokens": "node scripts/gen-test-tokens.js",
-    "gen:media": "node scripts/gen-test-tokens.js && node scripts/gen-screenshots.js"
+    "gen:media": "node scripts/gen-test-tokens.js && node scripts/gen-screenshots.js",
+    "build:zip": "node scripts/build-zip.js"
   },
   "keywords": [
     "jwt",
@@ -26,6 +27,7 @@
     "url": "https://github.com/hradecek/jotscope.git"
   },
   "devDependencies": {
-    "@playwright/test": "^1.61.1"
+    "@playwright/test": "^1.61.1",
+    "adm-zip": "^0.6.0"
   }
 }
