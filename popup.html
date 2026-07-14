@@ -322,10 +322,10 @@
       <div class="setting-block">
         <p class="setting-name">Fetch keys from issuer</p>
         <div class="segmented" id="fetch-keys-seg" role="group">
-          <span class="seg" data-mode="never">Never</span>
+          <span class="seg" data-mode="manual">Manual</span>
           <span class="seg" data-mode="automatic">Automatic</span>
         </div>
-        <p class="setting-desc">Fetching JWKS contacts the token's issuer. Everything else stays local.</p>
+        <p class="setting-desc">Automatic fetches on decode; Manual only when you click Fetch. Fetching JWKS contacts the token's issuer - everything else stays local.</p>
       </div>
     </section>
 
@@ -390,7 +390,7 @@
         <span id="about-version" class="about-version">v1.0.0</span>
       </div>
 
-      <p class="about-privacy">Everything runs locally. No analytics, no tracking. The only network request is an optional JWKS fetch you turn on in Settings.</p>
+      <p class="about-privacy">Everything runs locally. No analytics, no tracking. The only network request is an optional JWKS fetch to verify a signature - off by default and never without your action. It sends no token data.</p>
 
       <a class="about-row" href="https://github.com/hradecek/jotscope" target="_blank" rel="noopener noreferrer">
         <span class="about-row-icon">
