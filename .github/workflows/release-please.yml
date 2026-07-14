@@ -1,15 +1,17 @@
 name: release-please
 
-# Watches main and maintains a "release PR" that bumps the version
-# (package.json + manifest.json) and updates CHANGELOG.md from Conventional
-# Commit messages. Merging that PR tags the release and publishes a GitHub
-# Release. Config: release-please-config.json + .release-please-manifest.json.
-#
-# When a release is cut, the `publish` job (same run — so it works with the
-# default GITHUB_TOKEN) builds the store zip, attaches it to the GitHub
-# Release, and, if the Chrome Web Store secrets are set, uploads it as a store
-# DRAFT. Publishing (submit for review) is done manually from the dashboard.
+# MANUAL releases. Merging feature/fix PRs does NOT open a release PR — you
+# release when you decide:
+#   1. Actions -> release-please -> "Run workflow" (workflow_dispatch). This
+#      opens/updates the "chore(main): release X.Y.Z" PR from everything merged
+#      since the last release (bumps package.json + manifest.json, writes CHANGELOG).
+#   2. Review and merge that PR. Merging it re-runs this workflow (the push is a
+#      release commit, matched below), which tags the release, publishes the
+#      GitHub Release, attaches the zip, and uploads a Web Store draft.
+# The push trigger exists only to cut the release when the release PR is merged;
+# ordinary merges are ignored by the job-level `if`.
 on:
+  workflow_dispatch:
   push:
     branches: [main]
 
@@ -19,6 +21,11 @@ permissions:
 
 jobs:
   release-please:
+    # Run only when you trigger it manually, or when a release PR is being merged.
+    # Ordinary feature/fix merges fall through and do nothing — no release PR.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'push' && startsWith(github.event.head_commit.message, 'chore(main): release'))
     runs-on: ubuntu-latest
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}

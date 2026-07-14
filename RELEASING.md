@@ -1,21 +1,26 @@
 # Releasing
 
-Releases are automated with [release-please](https://github.com/googleapis/release-please).
-You never edit version numbers or the changelog by hand.
+Version bumps and the changelog are handled by
+[release-please](https://github.com/googleapis/release-please) — you never edit
+them by hand — but **releases are triggered manually**. Merging feature/fix PRs
+does *not* start a release; you decide when to cut one.
 
 ## The flow
 
-1. Land changes on `main` using [Conventional Commit](https://www.conventionalcommits.org/)
-   messages. With squash-only merges, **the PR title is the commit message**, so
-   the PR title must be conventional (a CI check enforces this):
+1. **Land changes freely.** Merge as many PRs as you like. Use
+   [Conventional Commit](https://www.conventionalcommits.org/) PR titles (a CI
+   check enforces this), because they decide the version bump when you do release:
    - `fix: …` → patch (`1.0.1`)
    - `feat: …` → minor (`1.1.0`)
    - `feat!: …` or a `BREAKING CHANGE:` footer → major (`2.0.0`)
-   - `docs:`, `chore:`, `ci:`, `refactor:`, `test:` → no release
-2. release-please opens/updates a **"chore: release X.Y.Z"** PR that bumps
-   `package.json` + `manifest.json` and updates `CHANGELOG.md`. It accumulates
-   changes until you're ready.
-3. **Merge that PR.** release-please then automatically:
+   - `docs:`, `chore:`, `ci:`, `refactor:`, `test:` → don't affect the version
+
+   Nothing release-related happens on these merges.
+2. **When you're ready to release**, run the workflow manually:
+   **Actions → release-please → Run workflow** (or `gh workflow run release-please.yml`).
+   It opens a **"chore(main): release X.Y.Z"** PR that bumps `package.json` +
+   `manifest.json` and writes `CHANGELOG.md` from everything merged since the last release.
+3. **Review and merge that PR.** Merging it automatically:
    - creates the git tag `vX.Y.Z`,
    - publishes the GitHub Release with notes,
    - builds the store zip (`npm run build:zip`) and attaches it to the release,
