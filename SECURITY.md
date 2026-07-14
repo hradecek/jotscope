@@ -13,7 +13,7 @@ You'll get an acknowledgement, and I'll work on a fix. Once it's resolved and re
 
 ## Supported versions
 
-Jotscope is pre-1.x; the latest release (currently **1.0.0**) is the only supported version.
+The latest release (currently **1.0.0**) is the only supported version.
 
 ## Scope notes
 

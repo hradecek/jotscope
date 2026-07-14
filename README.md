@@ -28,7 +28,7 @@
 
 </div>
 
-> **Status:** Pre-release. Installable now as an unpacked extension ([see below](#install-unpacked)); a Chrome Web Store listing is planned. Feedback and issues welcome.
+> **Status:** v1.0.0 - installable now as an unpacked extension ([see below](#install-unpacked)); the Chrome Web Store listing is in progress. Feedback and issues welcome.
 
 ---
 
@@ -229,7 +229,6 @@ Your tokens never leave your browser.
 
 | Permission      | Why                                                                                            |
 |-----------------|------------------------------------------------------------------------------------------------|
-| `storage`       | Save history & settings locally (`localStorage`)                                               |
 | `clipboardRead` | Read the clipboard **only** on an explicit paste (Paste button / Ctrl+V) - never automatically |
 
 No host permissions, no `<all_urls>`.
