@@ -25,7 +25,7 @@ test.beforeAll(async () => {
     args: [
       `--disable-extensions-except=${EXT}`,
       `--load-extension=${EXT}`,
-      // Headless (new mode — required for the MV3 service worker) unless HEADED=1,
+      // Headless (new mode - required for the MV3 service worker) unless HEADED=1,
       // which opens a real window for debugging (e.g. `HEADED=1 npx playwright test`).
       ...(process.env.HEADED ? [] : ['--headless=new']),
     ],
@@ -94,7 +94,7 @@ test('flags privileged roles, leaves normal ones neutral (Keycloak)', async () =
   await expect(visual.locator('.claim-chip', { hasText: 'viewer' }))
     .not.toHaveClass(/privileged/);
 
-  // Current matcher is admin / superuser / *-admin only — nothing else qualifies here.
+  // Current matcher is admin / superuser / *-admin only - nothing else qualifies here.
   await expect(visual.locator('.claim-chip.privileged')).toHaveCount(1);
 });
 
@@ -151,7 +151,7 @@ test('boolean claim uses the type color, not error red (Cognito email_verified)'
   await expect(key).toHaveCSS('color', 'rgb(192, 38, 211)');   // --syntax-boolean magenta, not red
 });
 
-test('About section — manifest version, header-version navigation, and links', async () => {
+test('About section - manifest version, header-version navigation, and links', async () => {
   const p = await openAndDecode('Google');   // the header version is present in every view
 
   // The header version is a clickable affordance that jumps to About in Settings.

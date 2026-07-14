@@ -17,7 +17,7 @@ export function setKeepHistory(value) {
 }
 
 // Whether to auto-fetch JWKS from the issuer to verify signatures.
-// The only outbound network call in the app — off ('never') by default.
+// The only outbound network call in the app - off ('never') by default.
 const FETCH_KEYS_KEY = 'jwt_fetch_keys_mode';
 
 export function getFetchKeysMode() {

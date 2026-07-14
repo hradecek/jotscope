@@ -1,4 +1,4 @@
-// format.js — date/time and duration formatting helpers.
+// format.js - date/time and duration formatting helpers.
 
 import { getTimestampMode } from './storage.js';
 import { escapeHtml } from './jwt.js';

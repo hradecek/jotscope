@@ -1,4 +1,4 @@
-// claims.js — the Visual / JSON claim renderers and the recursive nested-value
+// claims.js - the Visual / JSON claim renderers and the recursive nested-value
 // tree (string arrays → chips, objects → collapsible key rows, scalars → text).
 
 import { formatClaimDate, stackedDateHtml, getRelativeTimeShort } from '../utils/format.js';
@@ -23,7 +23,7 @@ function measureKeyWidth(text) {
 const DATE_CLAIMS = new Set(['exp', 'nbf', 'iat', 'auth_time', 'updated_at']);
 
 // Values worth rendering as individual chips: space-delimited scope strings,
-// and any array of scalar values (aud, roles, groups, amr, scp, …) — so every
+// and any array of scalar values (aud, roles, groups, amr, scp, …) - so every
 // multi-value claim renders consistently.
 const SCOPE_KEYS = new Set(['scope', 'scopes', 'scp']);
 
@@ -38,9 +38,9 @@ function scopeChips(key, value) {
 }
 
 // ── Recursive nested-value renderer (Payload Visual) ────────────────────────
-// Formats any provider's nested claims at any depth — string arrays → chips,
+// Formats any provider's nested claims at any depth - string arrays → chips,
 // objects → indented collapsible key rows, arrays of objects → indexed rows,
-// scalars → formatted text — while keeping the exact JSON reachable per claim.
+// scalars → formatted text - while keeping the exact JSON reachable per claim.
 
 const MAX_TREE_DEPTH   = 6;   // hard cap against hostile / deeply-nested tokens
 const COLLAPSE_DEPTH   = 2;   // auto-collapse nodes deeper than this…
@@ -169,7 +169,7 @@ function renderNode(key, value, depth) {
 
 // Top-level cell for an object / array-of-objects claim: the flattened
 // recursive tree. Raw JSON lives behind the global Visual/JSON toggle, which
-// pretty-prints the whole payload — so there's no per-claim raw affordance.
+// pretty-prints the whole payload - so there's no per-claim raw affordance.
 function renderNestedClaim(valueEl, value) {
   valueEl.classList.add('claim-value-nested');
 
@@ -189,9 +189,9 @@ function valueType(v) {
 
 function formatClaimValue(value, key) {
   if (value === undefined) {
-    return key === 'exp' ? '— not set —' : '—';
+    return key === 'exp' ? '- not set -' : '-';
   }
-  if (value === null || value === '') return '—';
+  if (value === null || value === '') return '-';
   if (typeof value === 'boolean') return String(value);
   if (typeof value === 'number') {
     if (DATE_CLAIMS.has(key) && isTimestampValue(value)) {
@@ -231,7 +231,7 @@ export function renderClaimsVisual(container, obj, opts = {}) {
     const isUrlKey = /^https?:\/\//i.test(key);
 
     // The claim key. When an explanation exists, make it an on-demand tooltip
-    // trigger — a dotted-underline cue, focusable for keyboard/touch, revealed
+    // trigger - a dotted-underline cue, focusable for keyboard/touch, revealed
     // on hover or focus. No always-visible sub-label; the tooltip is the sole
     // explainer, richer for cryptic provider claims (oid, wids, azp, …).
     const keyEl = document.createElement('span');
@@ -239,7 +239,7 @@ export function renderClaimsVisual(container, obj, opts = {}) {
     const keyText = displayKey(key);
     keyEl.textContent = keyText;
 
-    const tipText = CLAIM_TOOLTIPS[key] || (isUrlKey ? `Custom claim — ${key}` : '');
+    const tipText = CLAIM_TOOLTIPS[key] || (isUrlKey ? `Custom claim - ${key}` : '');
     if (tipText) {
       keyEl.classList.add('tooltip');
       keyEl.dataset.tooltip = tipText;
@@ -255,7 +255,7 @@ export function renderClaimsVisual(container, obj, opts = {}) {
     if (scope) {
       valueEl.appendChild(renderChips(scope, true));
     } else if (DATE_CLAIMS.has(key) && isTimestampValue(value)) {
-      // Stacked date + time line(s) — never truncates, respects Local/UTC/Both.
+      // Stacked date + time line(s) - never truncates, respects Local/UTC/Both.
       // Hover shows the full formatted date; click copies the raw epoch.
       const dateEl = document.createElement('span');
       dateEl.className = 'claim-date copyable';
@@ -291,7 +291,7 @@ export function renderClaimsVisual(container, obj, opts = {}) {
         valueText.title = raw;
       }
 
-      // email_verified: false — the classic integration footgun, flag it subtly.
+      // email_verified: false - the classic integration footgun, flag it subtly.
       if (key === 'email_verified' && value === false) {
         const flag = document.createElement('span');
         flag.className = 'claim-flag';

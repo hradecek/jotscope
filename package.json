@@ -1,7 +1,7 @@
 {
   "name": "jotscope",
   "version": "1.0.0",
-  "description": "Decode, inspect, and verify JSON Web Tokens locally in your browser — privacy-focused, zero runtime dependencies.",
+  "description": "Decode, inspect, and verify JSON Web Tokens locally in your browser - privacy-focused, zero runtime dependencies.",
   "main": "background.js",
   "scripts": {
     "pretest": "node scripts/gen-test-tokens.js",

@@ -1,5 +1,5 @@
-// Generates the README visual assets — logo/icon PNGs plus feature screenshots
-// and animated GIFs in BOTH light and dark themes — by driving the real
+// Generates the README visual assets - logo/icon PNGs plus feature screenshots
+// and animated GIFs in BOTH light and dark themes - by driving the real
 // unpacked extension with Playwright's Chromium. All images render from the
 // SYNTHETIC tokens in test-tokens.md (no real credentials), so the output is
 // safe to commit and fully reproducible.
@@ -93,7 +93,7 @@ async function decode(page, token) {
   await page.waitForSelector('#payload-claims-visual', { state: 'visible' });
 }
 
-// Decode when the input may be hidden (already decoded) — reopen via the chip.
+// Decode when the input may be hidden (already decoded) - reopen via the chip.
 async function decodeFresh(page, token) {
   if (!(await page.locator('#jwt-input').isVisible())) {
     await page.click('#token-chip');
@@ -151,7 +151,7 @@ async function stills(ctx, extId, scheme) {
 async function specialStills(ctx, extId, scheme) {
   const suffix = sfx(scheme);
 
-  // 11 — multi-token detection from an OAuth-callback-style URL.
+  // 11 - multi-token detection from an OAuth-callback-style URL.
   {
     const page = await openClean(ctx, extId);
     const blob = `https://app.example.com/callback#id_token=${readToken('Google')}&access_token=${readToken('Auth0')}`;
@@ -162,7 +162,7 @@ async function specialStills(ctx, extId, scheme) {
     await page.close();
   }
 
-  // 12 — history view (decode a few first so it has entries).
+  // 12 - history view (decode a few first so it has entries).
   {
     const page = await openClean(ctx, extId);
     for (const t of ['Google', 'Okta', 'Keycloak']) { await decodeFresh(page, readToken(t)); }
@@ -192,7 +192,7 @@ async function frame(page, name, i, clip) {
 async function gifs(ctx, extId, scheme) {
   const suffix = sfx(scheme);
 
-  // A — paste → decode. Fixed page clip so every frame is the same size.
+  // A - paste → decode. Fixed page clip so every frame is the same size.
   {
     const name = `paste-decode${suffix}`;
     const clip = { x: 0, y: 0, width: WIDTH, height: 540 };
@@ -211,7 +211,7 @@ async function gifs(ctx, extId, scheme) {
     assembleGif(name, 2, WIDTH);
   }
 
-  // B — token lifecycle, time-lapsed (Valid → Expiring → Expired) in ~9s.
+  // B - token lifecycle, time-lapsed (Valid → Expiring → Expired) in ~9s.
   {
     const name = `countdown${suffix}`;
     const token = readToken('Google');
@@ -225,7 +225,7 @@ async function gifs(ctx, extId, scheme) {
     assembleGif(name, 2, WIDTH);
   }
 
-  // C — expand a nested claim node.
+  // C - expand a nested claim node.
   {
     const name = `nested-tree${suffix}`;
     const page = await openClean(ctx, extId);
@@ -246,7 +246,7 @@ async function gifs(ctx, extId, scheme) {
   }
 }
 
-// ── Status pills — the five lifetime states, in both themes ─────────────────
+// ── Status pills - the five lifetime states, in both themes ─────────────────
 // Captured in a 2× (retina) context, cropped to the real status widget
 // (#summary-status-wrap: tinted box + label + relative-time line). The clock
 // is pinned per token so short-lived states don't lapse before capture.
@@ -289,18 +289,12 @@ async function rasterize(ctx, svgPath, width, height, outPath, ink) {
 }
 
 async function logoAndIcons(ctx) {
+  const markSvg = path.join(EXT, 'docs', 'logo-mark.svg');
   const logoSvg = path.join(EXT, 'docs', 'logo.svg');
-  // Each size rasterizes from a PURPOSE-BUILT source, not one file rescaled.
-  // All are self-grounded indigo tiles (white knockout glyph) matching the
-  // in-app header tile: 16 = two-bar, 32/48/128 = three-bar (payload longest).
-  const iconSrc = {
-    16:  path.join(EXT, 'docs', 'logo-mark-16.svg'),
-    32:  path.join(EXT, 'docs', 'logo-mark-32.svg'),
-    48:  path.join(EXT, 'docs', 'logo-mark.svg'),
-    128: path.join(EXT, 'docs', 'logo-mark.svg'),
-  };
-  for (const [size, src] of Object.entries(iconSrc)) {
-    await rasterize(ctx, src, +size, +size, path.join(ICONS, `icon${size}.png`));
+  // One tile design at every size (full-bleed indigo, white knockout mark) so
+  // all icons match - the white-on-indigo glyph stays legible even at 16px.
+  for (const size of [16, 32, 48, 128]) {
+    await rasterize(ctx, markSvg, size, size, path.join(ICONS, `icon${size}.png`));
   }
   await rasterize(ctx, logoSvg, 960, 240, path.join(MEDIA, 'hero-logo.png'), '#0f172a');
   await rasterize(ctx, logoSvg, 960, 240, path.join(MEDIA, 'hero-logo-dark.png'), '#f8f9fa');
@@ -308,7 +302,7 @@ async function logoAndIcons(ctx) {
 
 async function main() {
   if (!fs.existsSync(TOKENS_MD)) {
-    console.log('test-tokens.md missing — generating…');
+    console.log('test-tokens.md missing - generating…');
     execFileSync('node', ['scripts/gen-test-tokens.js'], { cwd: EXT, stdio: 'inherit' });
   }
   mkdirp(MEDIA); mkdirp(ICONS); mkdirp(FRAMES);

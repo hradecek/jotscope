@@ -1,4 +1,4 @@
-/* popup.css — uses variables from styles/theme.css */
+/* popup.css - uses variables from styles/theme.css */
 
 body {
   min-width: 420px;
@@ -253,7 +253,7 @@ body {
   text-decoration: underline;
 }
 
-/* ── Recent section — one bordered container, divider rows inside ────────── */
+/* ── Recent section - one bordered container, divider rows inside ────────── */
 .recent-section {
   margin-top: 4px;
   display: flex;
@@ -527,7 +527,7 @@ body {
   gap: 10px;
 }
 
-/* Token chip — clickable as a whole to return to the paste view */
+/* Token chip - clickable as a whole to return to the paste view */
 .token-chip {
   display: flex;
   align-items: center;
@@ -671,7 +671,7 @@ body {
 .summary-status-wrap.no-expiry { background: var(--badge-expiring-bg); }
 .summary-status-wrap.notyet    { background: var(--badge-notyet-bg); }
 
-/* Inside the tinted box the pill drops its own background — the box carries the tint */
+/* Inside the tinted box the pill drops its own background - the box carries the tint */
 .summary-status-wrap .status-pill {
   background: transparent;
   padding: 0;
@@ -1219,7 +1219,7 @@ body {
 }
 
 
-/* Privileged role names — conservative warning tint + bold. */
+/* Privileged role names - conservative warning tint + bold. */
 .claim-chip.privileged {
   background: var(--color-yellow-bg);
   color: var(--color-yellow);
@@ -1867,7 +1867,7 @@ a.about-row:focus-visible { outline: 2px solid var(--focus-ring); outline-offset
   border-bottom-color: var(--accent-primary);
 }
 
-/* Reusable themed dropdown — used by the History issuer filter and the
+/* Reusable themed dropdown - used by the History issuer filter and the
    Settings selects so they share one look (and theme correctly in dark mode). */
 .dropdown {
   position: relative;

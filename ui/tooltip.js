@@ -1,4 +1,4 @@
-// tooltip.js — the on-demand claim tooltip (hover / keyboard focus / Escape).
+// tooltip.js - the on-demand claim tooltip (hover / keyboard focus / Escape).
 
 const tooltipContainer = document.createElement('div');
 tooltipContainer.id = 'tooltip-container';

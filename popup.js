@@ -1,4 +1,4 @@
-// popup.js — orchestrator for the Jotscope popup UI
+// popup.js - orchestrator for the Jotscope popup UI
 'use strict';
 
 import {
@@ -133,7 +133,7 @@ function tokenFingerprint(token) {
   return (h >>> 0).toString(16).padStart(8, '0');
 }
 
-// Meta line (alg · time · status) — recomputed live as tokens change state.
+// Meta line (alg · time · status) - recomputed live as tokens change state.
 function rowMetaHtml(item, opts = {}) {
   let alg = '';
   let status = { label: 'Valid', tone: 'valid' };
@@ -215,7 +215,7 @@ function buildRecentRow(item, opts = {}) {
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(); }
   });
 
-  // Per-row remove — must not trigger the row's select.
+  // Per-row remove - must not trigger the row's select.
   row.querySelector('.recent-remove').addEventListener('click', e => {
     e.stopPropagation();
     deleteHistoryItem(item.id);
@@ -288,12 +288,12 @@ function renderSummary(token, header, payload) {
   const subjectLabel = payload.name || payload.given_name || payload.preferred_username || payload.sub || payload.email || 'Unknown';
 
   // alg pill
-  summaryAlg.textContent = header.alg || '—';
+  summaryAlg.textContent = header.alg || '-';
 
   // name (large)
   summaryName.textContent = subjectLabel;
 
-  // sub-line: email · role · org — only the slots that actually exist (no placeholders,
+  // sub-line: email · role · org - only the slots that actually exist (no placeholders,
   // no sub fallback since sub already owns the heading). Hidden when nothing to show.
   const metaParts = [];
   if (payload.email) metaParts.push(String(payload.email));
@@ -344,14 +344,14 @@ function renderNoExpiryCallout(payload) {
 function renderLifetimeStatic(payload) {
   const iat = typeof payload.iat === 'number' ? payload.iat : null;
   const exp = typeof payload.exp === 'number' ? payload.exp : null;
-  lifetimeIat.innerHTML = iat ? stackedDateHtml(iat) : '—';
-  lifetimeExp.innerHTML = exp ? stackedDateHtml(exp) : '—';
+  lifetimeIat.innerHTML = iat ? stackedDateHtml(iat) : '-';
+  lifetimeExp.innerHTML = exp ? stackedDateHtml(exp) : '-';
   lifetimeIat.title = iat ? `${iat} · epoch seconds` : '';
   lifetimeExp.title = exp ? `${exp} · epoch seconds` : '';
-  lifetimeDuration.textContent = (iat && exp && exp > iat) ? formatDuration(exp - iat) : '—';
+  lifetimeDuration.textContent = (iat && exp && exp > iat) ? formatDuration(exp - iat) : '-';
 }
 
-// ── Live state: status pill, countdown, progress bar — ticked every second ───
+// ── Live state: status pill, countdown, progress bar - ticked every second ───
 const STATUS_TONES = ['valid', 'expired', 'expiring', 'no-expiry', 'notyet'];
 
 function tickState() {
@@ -395,7 +395,7 @@ function tickState() {
 }
 
 // Refresh the time-sensitive parts of the visible Recent/History rows in place
-// (no rebuild — hover, scroll and the issuer menu are untouched).
+// (no rebuild - hover, scroll and the issuer menu are untouched).
 function refreshListRows() {
   document.querySelectorAll('.recent-row').forEach(row => {
     if (!row._item || row.offsetParent === null) return;   // skip hidden rows
@@ -481,7 +481,7 @@ function setVerifyRow(name, key, state, status) {
   const row = document.createElement('div');
   row.className = 'verify-row';
   row.dataset.check = key;
-  const iconChar = state === 'ok' ? '✓' : state === 'fail' ? '✕' : state === 'warn' ? '!' : '—';
+  const iconChar = state === 'ok' ? '✓' : state === 'fail' ? '✕' : state === 'warn' ? '!' : '-';
   row.innerHTML = `
     <span class="verify-icon ${state}" aria-hidden="true">${iconChar}</span>
     <span class="verify-name">${escapeHtml(name)}</span>
@@ -496,9 +496,9 @@ function renderVerify(token, header, payload, signatureB64) {
 
   const algNone = !header.alg || String(header.alg).toLowerCase() === 'none';
 
-  // Signature row — unsigned is its own warning state, not a "no key" state.
+  // Signature row - unsigned is its own warning state, not a "no key" state.
   const sigRow = setVerifyRow('Signature', 'signature', 'warn',
-    algNone ? 'Unsigned (alg: none)' : 'Not verified — no key');
+    algNone ? 'Unsigned (alg: none)' : 'Not verified - no key');
   verifyChecks.appendChild(sigRow);
 
   // Expiration
@@ -556,12 +556,12 @@ function renderVerify(token, header, payload, signatureB64) {
   if (algNone) {
     jwksFetchBlock.classList.add('hidden');
     showAutoDetectError('Unsigned token',
-      'This token has no signature. Anyone can alter its contents — a server must never accept it.', 'warn');
+      'This token has no signature. Anyone can alter its contents - a server must never accept it.', 'warn');
     return;
   }
   jwksFetchBlock.classList.remove('hidden');
 
-  // Verifying the signature means contacting the issuer's JWKS — the only
+  // Verifying the signature means contacting the issuer's JWKS - the only
   // outbound request. Gated by the "Fetch keys from issuer" setting.
   if (payload.iss && isValidUrl(payload.iss)) {
     if (getFetchKeysMode() === 'automatic') {
@@ -581,7 +581,7 @@ function updateSignatureRow(state, status) {
   const icon = row.querySelector('.verify-icon');
   const statusEl = row.querySelector('.verify-status');
   icon.className = `verify-icon ${state}`;
-  icon.textContent = state === 'ok' ? '✓' : state === 'fail' ? '✕' : state === 'warn' ? '!' : '—';
+  icon.textContent = state === 'ok' ? '✓' : state === 'fail' ? '✕' : state === 'warn' ? '!' : '-';
   statusEl.className = `verify-status ${state}`;
   statusEl.textContent = status;
 }
@@ -614,9 +614,9 @@ async function autoFetchAndVerify(token, header, payload) {
       updateSignatureRow('ok', 'Verified via JWKS');
       hideAutoDetectCallout();
     } else {
-      updateSignatureRow('fail', 'Signature invalid — possibly forged');
+      updateSignatureRow('fail', 'Signature invalid - possibly forged');
       showAutoDetectError('Invalid signature',
-        'The signature doesn\'t match the issuer\'s key — the token may be forged or signed with a different key.', 'error');
+        'The signature doesn\'t match the issuer\'s key - the token may be forged or signed with a different key.', 'error');
     }
   } catch (err) {
     updateSignatureRow('warn', "Couldn't fetch keys");
@@ -642,7 +642,7 @@ fetchJwksBtn.addEventListener('click', async () => {
     } else {
       jwksStatus.classList.add('error');
       jwksStatus.textContent = 'Signature invalid';
-      updateSignatureRow('fail', 'Signature invalid — possibly forged');
+      updateSignatureRow('fail', 'Signature invalid - possibly forged');
     }
   } catch (err) {
     jwksStatus.classList.add('error');
@@ -670,10 +670,10 @@ function renderAlgWarning(header) {
   const norm = typeof alg === 'string' ? alg.toLowerCase() : '';
   if (!alg || norm === 'none') {
     algWarning.className = 'alg-warning warn';
-    algWarningText.textContent = 'Unsigned token (alg: none). Anyone can forge this — never trust it in production.';
+    algWarningText.textContent = 'Unsigned token (alg: none). Anyone can forge this - never trust it in production.';
   } else if (!ALGORITHM_MAP[alg]) {
     algWarning.className = 'alg-warning warn';
-    algWarningText.textContent = `Unrecognized algorithm “${alg}” — its signature can't be verified here.`;
+    algWarningText.textContent = `Unrecognized algorithm “${alg}” - its signature can't be verified here.`;
   } else {
     algWarning.className = 'alg-warning hidden';
   }
@@ -813,7 +813,7 @@ pasteBtn.addEventListener('keydown', e => {
 });
 
 jwtInput.addEventListener('input', () => {
-  // Don't decode mid-edit — that would yank you into the decoded view on every
+  // Don't decode mid-edit - that would yank you into the decoded view on every
   // keystroke. Decoding happens on blur, Ctrl+Enter, or paste instead.
   updateInputEmptyState();
   inputHint.classList.remove('visible');
@@ -837,7 +837,7 @@ jwtInput.addEventListener('blur', e => {
   if (jwtInput.value.trim()) handleDecode();
 });
 
-// Global paste — redirect any paste outside of an input/textarea to decode the clipboard contents.
+// Global paste - redirect any paste outside of an input/textarea to decode the clipboard contents.
 document.addEventListener('paste', e => {
   const tag = e.target && e.target.tagName;
   if (tag === 'INPUT' || tag === 'TEXTAREA') return;
@@ -908,7 +908,7 @@ function historyItemMatches(item, q) {
     const { header, payload } = parseJWT(item.token);
     tone = getTokenStatus(payload, getExpiringThreshold()).tone;
     hay = [item.issuer || '', header.kid || '', JSON.stringify(payload)].join(' ');
-  } catch (_) { /* invalid token — treated as expired for filtering */ }
+  } catch (_) { /* invalid token - treated as expired for filtering */ }
   if (historyFilter === 'valid' && tone === 'expired') return false;
   if (historyFilter === 'expired' && tone !== 'expired') return false;
   if (q && !hay.toLowerCase().includes(q)) return false;
@@ -1075,7 +1075,7 @@ function syncKeepHistoryToggle() {
 }
 
 function toggleKeepHistory() {
-  // Only flip the preference here — deletion is deferred until you leave Settings,
+  // Only flip the preference here - deletion is deferred until you leave Settings,
   // so toggling off then back on within Settings deletes nothing.
   setKeepHistory(!getKeepHistory());
   syncKeepHistoryToggle();

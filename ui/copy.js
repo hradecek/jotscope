@@ -1,4 +1,4 @@
-// copy.js — click-to-copy claim values + copy-with-feedback buttons.
+// copy.js - click-to-copy claim values + copy-with-feedback buttons.
 
 export function setupCopyableValues(root = document) {
   root.querySelectorAll('.copyable[data-copy-value]').forEach(el => {

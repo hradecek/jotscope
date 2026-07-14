@@ -1,5 +1,5 @@
 // Generates realistic (but synthetic) JWTs for manually testing the extension.
-// Signatures are random placeholders — these are NOT real credentials.
+// Signatures are random placeholders - these are NOT real credentials.
 // Run: node scripts/gen-test-tokens.js  → writes test-tokens.md
 'use strict';
 
@@ -29,7 +29,7 @@ function jwt(header, payload) {
 
 const samples = [
   {
-    name: 'Google — OIDC ID token (valid, RS256)',
+    name: 'Google - OIDC ID token (valid, RS256)',
     header: { alg: 'RS256', kid: 'a1b2c3d4e5f6', typ: 'JWT' },
     payload: {
       iss: 'https://accounts.google.com', azp: '407408718192.apps.googleusercontent.com',
@@ -41,7 +41,7 @@ const samples = [
     },
   },
   {
-    name: 'Auth0 — access token with org + custom namespaced claim',
+    name: 'Auth0 - access token with org + custom namespaced claim',
     header: { alg: 'RS256', kid: 'auth0-prod-1', typ: 'JWT' },
     payload: {
       iss: 'https://acme.eu.auth0.com/', sub: 'auth0|64f1a2b3c4d5e6f7',
@@ -53,7 +53,7 @@ const samples = [
     },
   },
   {
-    name: 'Microsoft Entra ID (Azure AD) v2 — access token',
+    name: 'Microsoft Entra ID (Azure AD) v2 - access token',
     header: { alg: 'RS256', kid: '-KI3Q9nNR7bRofxmeZoXqbHZGew', typ: 'JWT' },
     payload: {
       aud: 'api://8f3d1c2e-...', iss: 'https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/v2.0',
@@ -64,7 +64,7 @@ const samples = [
     },
   },
   {
-    name: 'AWS Cognito — ID token (email not verified)',
+    name: 'AWS Cognito - ID token (email not verified)',
     header: { alg: 'RS256', kid: 'cognito-key-1', typ: 'JWT' },
     payload: {
       iss: 'https://cognito-idp.eu-west-1.amazonaws.com/eu-west-1_Ab12Cd34',
@@ -75,7 +75,7 @@ const samples = [
     },
   },
   {
-    name: 'Keycloak — realm + resource roles',
+    name: 'Keycloak - realm + resource roles',
     header: { alg: 'RS256', kid: 'keycloak-rsa-1', typ: 'JWT' },
     payload: {
       iss: 'https://sso.acme.com/realms/acme', sub: 'f:1234:jane', aud: 'account',
@@ -87,7 +87,7 @@ const samples = [
     },
   },
   {
-    name: 'Firebase — ID token',
+    name: 'Firebase - ID token',
     header: { alg: 'RS256', kid: 'fb-2024-01', typ: 'JWT' },
     payload: {
       iss: 'https://securetoken.google.com/my-app-12345', aud: 'my-app-12345',
@@ -97,7 +97,7 @@ const samples = [
     },
   },
   {
-    name: 'GitHub Actions — OIDC token',
+    name: 'GitHub Actions - OIDC token',
     header: { alg: 'RS256', kid: 'gha-oidc-1', typ: 'JWT' },
     payload: {
       iss: 'https://token.actions.githubusercontent.com', sub: 'repo:acme/widgets:ref:refs/heads/main',
@@ -107,7 +107,7 @@ const samples = [
     },
   },
   {
-    name: 'Okta — access token (long acr, scopes, groups)',
+    name: 'Okta - access token (long acr, scopes, groups)',
     header: { alg: 'RS256', kid: 'okta-abc123', typ: 'JWT' },
     payload: {
       iss: 'https://acme.okta.com/oauth2/default', aud: 'api://default', sub: 'jane@acme.com',
@@ -117,17 +117,17 @@ const samples = [
     },
   },
   {
-    name: 'HS256 — symmetric (jwt.io-style demo)',
+    name: 'HS256 - symmetric (jwt.io-style demo)',
     header: { alg: 'HS256', typ: 'JWT' },
     payload: { sub: '1234567890', name: 'John Doe', admin: true, iat: m(-15), exp: h(2) },
   },
   {
-    name: 'ES256 — elliptic curve',
+    name: 'ES256 - elliptic curve',
     header: { alg: 'ES256', kid: 'ec-key-1', typ: 'JWT' },
     payload: { iss: 'https://api.example.com', sub: 'svc-account-9', aud: 'internal', iat: m(-1), exp: h(1) },
   },
   {
-    name: 'alg: none — UNSIGNED (security test)',
+    name: 'alg: none - UNSIGNED (security test)',
     header: { alg: 'none', typ: 'JWT' },
     payload: { sub: 'attacker', name: 'Totally Legit Admin', role: 'admin', iat: m(-1), exp: h(1) },
   },
@@ -156,8 +156,8 @@ const samples = [
 const lines = [
   '# JWT test tokens',
   '',
-  '_Synthetic tokens for testing Jotscope — signatures are random placeholders, not real credentials._',
-  `_Generated ${new Date().toISOString()} — timestamps are relative to generation time; re-run the script to refresh live states._`,
+  '_Synthetic tokens for testing Jotscope - signatures are random placeholders, not real credentials._',
+  `_Generated ${new Date().toISOString()} - timestamps are relative to generation time; re-run the script to refresh live states._`,
   '',
 ];
 for (const s of samples) {
