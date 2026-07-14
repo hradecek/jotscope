@@ -298,6 +298,9 @@ async function logoAndIcons(ctx) {
   }
   await rasterize(ctx, logoSvg, 960, 240, path.join(MEDIA, 'hero-logo.png'), '#0f172a');
   await rasterize(ctx, logoSvg, 960, 240, path.join(MEDIA, 'hero-logo-dark.png'), '#f8f9fa');
+  // GitHub social preview card (upload via Settings > General > Social preview).
+  const socialSvg = path.join(EXT, 'docs', 'social-preview.svg');
+  await rasterize(ctx, socialSvg, 1280, 640, path.join(MEDIA, 'social-preview.png'));
 }
 
 async function main() {
