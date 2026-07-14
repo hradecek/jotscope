@@ -822,7 +822,6 @@ jwtInput.addEventListener('input', () => {
 
 jwtInput.addEventListener('keydown', e => {
   if (e.key === 'Enter' && e.ctrlKey) handleDecode();
-  if (e.key === 'C' && e.ctrlKey && e.shiftKey) { e.preventDefault(); clearInput(); }
 });
 
 jwtInput.addEventListener('paste', () => {
@@ -849,7 +848,7 @@ document.addEventListener('paste', e => {
   handleDecode();
 });
 
-// Global keyboard shortcuts (Ctrl+Shift+H/P/B)
+// Global keyboard shortcuts (Ctrl+Shift+H/P/Y)
 document.addEventListener('keydown', async e => {
   if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
   if (!currentToken) return;
@@ -867,10 +866,23 @@ document.addEventListener('keydown', async e => {
       document.querySelector('.btn-copy-json[data-target="payload"]'),
       '<span aria-hidden="true">✓</span> Copied!');
   }
-  if (e.key === 'B' && e.ctrlKey && e.shiftKey) {
+  // Ctrl+Shift+Y copies Bearer (Ctrl+Shift+B is reserved by Chrome for the bookmarks bar).
+  if (e.key === 'Y' && e.ctrlKey && e.shiftKey) {
     e.preventDefault();
     copyBearerBtn.click();
   }
+});
+
+// Ctrl+Backspace clears the loaded token / input from anywhere (Ctrl+Shift+C is
+// reserved by Chrome for Inspect Element). Bound globally so it works in the
+// decoded view too - but stands aside in the search / JWKS fields so their
+// native word-delete still works.
+document.addEventListener('keydown', e => {
+  if (!(e.key === 'Backspace' && e.ctrlKey)) return;
+  const t = e.target;
+  if (t.tagName === 'INPUT' || (t.tagName === 'TEXTAREA' && t !== jwtInput)) return;
+  e.preventDefault();
+  clearInput();
 });
 
 // View "View all" placeholder
@@ -1087,7 +1099,7 @@ keepHistoryToggle.addEventListener('keydown', e => {
 });
 syncKeepHistoryToggle();
 
-// ── Setting: Fetch keys from issuer (never | automatic) ───────────────────
+// ── Setting: Fetch keys from issuer (manual | automatic) ──────────────────
 const fetchKeysSeg = document.getElementById('fetch-keys-seg');
 
 function syncFetchKeysSeg() {

@@ -17,15 +17,16 @@ export function setKeepHistory(value) {
 }
 
 // Whether to auto-fetch JWKS from the issuer to verify signatures.
-// The only outbound network call in the app - off ('never') by default.
+// The only outbound network call in the app - 'manual' (on-demand only) by
+// default; 'automatic' fetches on decode. Legacy 'never' values read as 'manual'.
 const FETCH_KEYS_KEY = 'jwt_fetch_keys_mode';
 
 export function getFetchKeysMode() {
-  return localStorage.getItem(FETCH_KEYS_KEY) === 'automatic' ? 'automatic' : 'never';
+  return localStorage.getItem(FETCH_KEYS_KEY) === 'automatic' ? 'automatic' : 'manual';
 }
 
 export function setFetchKeysMode(mode) {
-  localStorage.setItem(FETCH_KEYS_KEY, mode === 'automatic' ? 'automatic' : 'never');
+  localStorage.setItem(FETCH_KEYS_KEY, mode === 'automatic' ? 'automatic' : 'manual');
 }
 
 // Whether to flag alg:none / unrecognized algorithms. Defaults to on.

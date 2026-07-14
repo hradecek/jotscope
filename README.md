@@ -225,7 +225,7 @@ Your tokens never leave your browser.
 - No analytics, no tracking, **zero runtime dependencies**.
 - **The clipboard is read only when you ask** - when you click the *Paste* button or press Ctrl/Cmd+V into the input. Jotscope never reads the clipboard on open, in the background, or on a timer, and nothing read is transmitted or stored beyond the local decode.
 - **History & settings are stored only in your browser's `localStorage`** - never synced or sent anywhere. History keeps the **full** recently-decoded tokens so you can revisit them (capped at 150, de-duplicated); clear it, remove expired entries, or turn history off entirely in Settings.
-- Decoding is 100% local. **Signature verification can optionally fetch the issuer's public JWKS** - the single outbound request the extension can make. It's **opt-in** (Settings -> *Fetch keys* -> *Automatic*; default *Never*), sends no token data, and only GETs the issuer's well-known JWKS URL.
+- Decoding is 100% local. **Signature verification can optionally fetch the issuer's public JWKS** - the single outbound request the extension can make. It never fires on its own: the default *Manual* mode fetches only when you click *Fetch*, and *Automatic* (Settings -> *Fetch keys*) fetches on decode. Either way it sends no token data.
 
 | Permission      | Why                                                                                            |
 |-----------------|------------------------------------------------------------------------------------------------|
@@ -246,12 +246,15 @@ Details in [SECURITY.md](SECURITY.md).
 
 ## Keyboard shortcuts
 
-| Shortcut       | Action                                  |
-|----------------|-----------------------------------------|
-| `Ctrl+Enter`   | Decode the token in the input           |
-| `Ctrl+Shift+C` | Clear the input                         |
-| `Paste`        | Auto-decode (when the input is focused) |
-| `Esc`          | Dismiss an open claim tooltip           |
+| Shortcut         | Action                                     |
+|------------------|--------------------------------------------|
+| `Ctrl+Enter`     | Decode the token in the input              |
+| `Ctrl+Backspace` | Clear the input                            |
+| `Paste`          | Auto-decode (when the input is focused)    |
+| `Ctrl+Shift+H`   | Copy the header JSON (with a token loaded) |
+| `Ctrl+Shift+P`   | Copy the payload JSON (with a token loaded)|
+| `Ctrl+Shift+Y`   | Copy the token as a `Bearer` value         |
+| `Esc`            | Dismiss an open claim tooltip              |
 
 ---
 
