@@ -1,6 +1,6 @@
 name: release-please
 
-# MANUAL releases. Merging feature/fix PRs does NOT open a release PR — you
+# MANUAL releases. Merging feature/fix PRs does NOT open a release PR - you
 # release when you decide:
 #   1. Actions -> release-please -> "Run workflow" (workflow_dispatch). This
 #      opens/updates the "chore(main): release X.Y.Z" PR from everything merged
@@ -22,7 +22,7 @@ permissions:
 jobs:
   release-please:
     # Run only when you trigger it manually, or when a release PR is being merged.
-    # Ordinary feature/fix merges fall through and do nothing — no release PR.
+    # Ordinary feature/fix merges fall through and do nothing - no release PR.
     if: >-
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'push' && startsWith(github.event.head_commit.message, 'chore(main): release'))
@@ -44,7 +44,7 @@ jobs:
       contents: write
     env:
       TAG: ${{ needs.release-please.outputs.tag_name }}
-      # Chrome Web Store API credentials — add these four as repo secrets to
+      # Chrome Web Store API credentials - add these four as repo secrets to
       # enable the draft upload (see RELEASING.md). Until then the store step is
       # skipped and the release still gets the built zip attached.
       EXTENSION_ID: ${{ secrets.CWS_EXTENSION_ID }}

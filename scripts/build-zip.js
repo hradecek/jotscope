@@ -1,5 +1,5 @@
 // Builds the Chrome Web Store upload package: a zip of ONLY the files the
-// extension needs at runtime (an allowlist — never docs/tests/scripts/tooling,
+// extension needs at runtime (an allowlist - never docs/tests/scripts/tooling,
 // so no synthetic tokens or dev cruft ship to users). Cross-platform (no `zip`
 // binary needed), so it runs the same on Windows and in CI.
 //
@@ -14,7 +14,7 @@ const ROOT = path.resolve(__dirname, '..');
 const OUT_DIR = path.join(ROOT, 'dist');
 const OUT = path.join(OUT_DIR, 'jotscope.zip');
 
-// Everything the extension loads at runtime — keep in sync with manifest.json
+// Everything the extension loads at runtime - keep in sync with manifest.json
 // and the popup's module imports. Files first, then whole directories.
 const FILES = ['manifest.json', 'background.js', 'popup.html', 'popup.css', 'popup.js'];
 const DIRS = ['styles', 'ui', 'utils', 'icons'];

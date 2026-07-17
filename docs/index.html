@@ -1,0 +1,770 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jotscope - JWT Inspector for Chrome</title>
+<meta name="description" content="Decode, inspect & verify JSON Web Tokens 100% in your browser. Offline by default - no servers, no tracking, no network calls. A privacy-first Chrome extension.">
+<link rel="icon" type="image/svg+xml" href="logo-mark.svg">
+<link rel="canonical" href="https://chromewebstore.google.com/detail/jotscope-jwt-inspector/mklonjinblipphhognhkcjklpnkjehpe">
+
+<!-- Open Graph / Twitter -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Jotscope - JWT Inspector for Chrome">
+<meta property="og:description" content="Decode, inspect & verify JWTs 100% in your browser. Offline by default - no servers, no tracking, no network calls.">
+<meta property="og:image" content="media/social-preview.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Jotscope - JWT Inspector for Chrome">
+<meta name="twitter:description" content="Decode, inspect & verify JWTs 100% in your browser. Offline by default.">
+<meta name="twitter:image" content="media/social-preview.png">
+
+<style>
+/* ─── Tokens (mirrors the extension's styles/theme.css - light default, dark via media query) ─── */
+:root {
+  color-scheme: light dark;
+
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  --font-mono: 'SF Mono', 'JetBrains Mono', 'Fira Code', 'Cascadia Code', Menlo, Monaco, Consolas, monospace;
+
+  /* grounds */
+  --bg: #f8f9fa;
+  --bg-panel: #ffffff;
+  --bg-sunken: #f1f5f9;
+  --bg-code: #0f172a;           /* code surfaces stay dark in both themes - like an editor */
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+
+  /* text */
+  --text: #1a1a2e;
+  --text-soft: #475569;
+  --text-muted: #64748b;
+  --text-faint: #94a3b8;
+
+  /* accent (indigo) */
+  --accent: #6366f1;
+  --accent-hover: #4f46e5;
+  --accent-soft: #eef2ff;
+  --accent-ring: rgba(99, 102, 241, 0.18);
+
+  /* the three JWT segments - the brand's own colour language */
+  --seg-header: #6366f1;   /* indigo  */
+  --seg-payload: #059669;  /* green   */
+  --seg-sig: #c026d3;      /* fuchsia */
+
+  /* decoded-claim syntax palette (matches the extension) */
+  --syntax-key: #6d28d9;
+  --syntax-string: #047857;
+  --syntax-number: #1d4ed8;
+  --syntax-bool: #c026d3;
+
+  /* semantic */
+  --good: #059669;
+  --good-bg: #d1fae5;
+  --warn: #d97706;
+  --warn-bg: #fef3c7;
+
+  --shadow-md: 0 4px 20px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 24px 60px -20px rgba(15, 23, 42, 0.22);
+  --radius: 16px;
+
+  /* code-surface text colours (constant across themes) */
+  --code-dim: #64748b;
+  --code-seg-header: #818cf8;
+  --code-seg-payload: #34d399;
+  --code-seg-sig: #e879f9;
+  --code-key: #a78bfa;
+  --code-string: #34d399;
+  --code-number: #60a5fa;
+  --code-bool: #e879f9;
+  --code-text: #e2e8f0;
+}
+
+/* Dark palette - shared by OS-auto (no manual choice) and the explicit toggle.
+   Kept as one custom-property list applied by two selectors so they never drift. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --bg: #0b1120;
+    --bg-panel: #131c2e;
+    --bg-sunken: #0f172a;
+    --border: #26324a;
+    --border-strong: #3a4a68;
+
+    --text: #eef2f9;
+    --text-soft: #b7c1d4;
+    --text-muted: #93a1ba;
+    --text-faint: #64748b;
+
+    --accent: #818cf8;
+    --accent-hover: #a5b0ff;
+    --accent-soft: #1e2547;
+    --accent-ring: rgba(129, 140, 248, 0.28);
+
+    --seg-header: #818cf8;
+    --seg-payload: #34d399;
+    --seg-sig: #e879f9;
+
+    --syntax-key: #a78bfa;
+    --syntax-string: #34d399;
+    --syntax-number: #60a5fa;
+    --syntax-bool: #e879f9;
+
+    --good: #34d399;
+    --good-bg: #064e3b;
+    --warn: #fbbf24;
+    --warn-bg: #78350f;
+
+    --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.45);
+    --shadow-lg: 0 30px 70px -24px rgba(0, 0, 0, 0.7);
+  }
+}
+
+/* Manual dark (toggle) - same values, wins over the OS media query via specificity */
+:root[data-theme="dark"] {
+  --bg: #0b1120;
+  --bg-panel: #131c2e;
+  --bg-sunken: #0f172a;
+  --border: #26324a;
+  --border-strong: #3a4a68;
+
+  --text: #eef2f9;
+  --text-soft: #b7c1d4;
+  --text-muted: #93a1ba;
+  --text-faint: #64748b;
+
+  --accent: #818cf8;
+  --accent-hover: #a5b0ff;
+  --accent-soft: #1e2547;
+  --accent-ring: rgba(129, 140, 248, 0.28);
+
+  --seg-header: #818cf8;
+  --seg-payload: #34d399;
+  --seg-sig: #e879f9;
+
+  --syntax-key: #a78bfa;
+  --syntax-string: #34d399;
+  --syntax-number: #60a5fa;
+  --syntax-bool: #e879f9;
+
+  --good: #34d399;
+  --good-bg: #064e3b;
+  --warn: #fbbf24;
+  --warn-bg: #78350f;
+
+  --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 30px 70px -24px rgba(0, 0, 0, 0.7);
+}
+/* Manual light needs no block: bare :root already holds the light values, and
+   neither dark selector matches when data-theme="light". */
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+a { color: inherit; }
+img { max-width: 100%; display: block; }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.wrap { width: 100%; max-width: 1040px; margin-inline: auto; padding-inline: 24px; }
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ─── Nav ─────────────────────────────────────────────── */
+.nav {
+  position: sticky; top: 0; z-index: 50;
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner { display: flex; align-items: center; gap: 16px; height: 62px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 650; font-size: 18px; letter-spacing: -0.02em; text-decoration: none; }
+.brand svg { width: 30px; height: 30px; border-radius: 8px; flex-shrink: 0; }
+.nav-spacer { flex: 1; }
+.nav-link { text-decoration: none; color: var(--text-soft); font-weight: 550; font-size: 15px; padding: 8px 4px; }
+.nav-link:hover { color: var(--text); }
+
+/* Theme toggle */
+.theme-toggle {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 38px; height: 38px; flex-shrink: 0;
+  border: 1px solid var(--border); border-radius: 10px;
+  background: var(--bg-panel); color: var(--text-soft);
+  cursor: pointer; transition: background .15s ease, color .15s ease, border-color .15s ease;
+}
+.theme-toggle:hover { color: var(--text); border-color: var(--border-strong); background: var(--bg-sunken); }
+.theme-toggle svg { width: 18px; height: 18px; }
+/* Show the icon for the theme you'd switch TO: moon while light, sun while dark. */
+.theme-toggle .i-sun { display: none; }
+.theme-toggle .i-moon { display: block; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .theme-toggle .i-sun { display: block; }
+  :root:not([data-theme]) .theme-toggle .i-moon { display: none; }
+}
+:root[data-theme="dark"] .theme-toggle .i-sun { display: block; }
+:root[data-theme="dark"] .theme-toggle .i-moon { display: none; }
+:root[data-theme="light"] .theme-toggle .i-sun { display: none; }
+:root[data-theme="light"] .theme-toggle .i-moon { display: block; }
+
+/* ─── Buttons ─────────────────────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; gap: 9px;
+  font: inherit; font-weight: 600; font-size: 15px;
+  padding: 11px 20px; border-radius: 12px;
+  text-decoration: none; cursor: pointer; border: 1px solid transparent;
+  transition: transform .12s ease, background .15s ease, border-color .15s ease, box-shadow .15s ease;
+  white-space: nowrap;
+}
+.btn:active { transform: translateY(1px); }
+.btn-primary { background: var(--accent); color: #fff; box-shadow: 0 6px 18px -6px var(--accent-ring); }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-ghost { background: transparent; color: var(--text); border-color: var(--border-strong); }
+.btn-ghost:hover { background: var(--bg-sunken); border-color: var(--text-faint); }
+.btn svg { width: 18px; height: 18px; }
+.nav .btn { padding: 8px 16px; font-size: 14px; }
+
+/* ─── Hero ────────────────────────────────────────────── */
+.hero { padding: 76px 0 44px; }
+.hero-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 52px; align-items: center; }
+.hero h1 {
+  font-size: clamp(2.3rem, 5.2vw, 3.5rem);
+  line-height: 1.05; letter-spacing: -0.035em; font-weight: 720;
+  margin: 18px 0 0; text-wrap: balance;
+}
+.hero h1 .accent { color: var(--accent); }
+.hero p.lead { font-size: clamp(1.05rem, 1.9vw, 1.22rem); color: var(--text-soft); margin-top: 20px; max-width: 34ch; }
+.hero-cta { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 30px; }
+.hero-note { margin-top: 16px; font-size: 13.5px; color: var(--text-muted); }
+.hero-note strong { color: var(--good); font-weight: 650; }
+
+/* animated entrance */
+.rise { opacity: 0; transform: translateY(14px); animation: rise .7s cubic-bezier(.2,.7,.3,1) forwards; }
+.rise-1 { animation-delay: .05s; }
+.rise-2 { animation-delay: .14s; }
+.rise-3 { animation-delay: .23s; }
+.rise-4 { animation-delay: .32s; }
+@keyframes rise { to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .rise { animation: none; opacity: 1; transform: none; } }
+
+/* browser-framed demo */
+.frame {
+  border-radius: var(--radius); overflow: hidden;
+  border: 1px solid var(--border); background: var(--bg-panel);
+  box-shadow: var(--shadow-lg);
+}
+.frame-bar {
+  display: flex; align-items: center; gap: 9px;
+  padding: 11px 14px; border-bottom: 1px solid var(--border);
+  background: var(--bg-sunken);
+}
+.frame-bar svg { width: 20px; height: 20px; border-radius: 6px; }
+.frame-bar .title { font-size: 13px; font-weight: 600; color: var(--text-soft); }
+.frame-bar .spacer { flex: 1; }
+.frame-bar .pill { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); border: 1px solid var(--border); border-radius: 999px; padding: 2px 9px; }
+.frame img, .frame video { width: 100%; display: block; }
+.demo-video { background: var(--bg-sunken); }
+
+/* ─── Anatomy strip ───────────────────────────────────── */
+.anatomy { padding: 26px 0 8px; }
+.anatomy-card {
+  background: var(--bg-code); border-radius: var(--radius);
+  border: 1px solid #1e293b; padding: 30px 28px; box-shadow: var(--shadow-md);
+}
+.anatomy-label { text-align: center; font-family: var(--font-mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--code-dim); margin-bottom: 18px; }
+.token {
+  font-family: var(--font-mono); font-size: clamp(13px, 2vw, 17px); line-height: 1.9;
+  text-align: center; word-break: break-all; letter-spacing: .01em;
+}
+.token .dot { color: var(--code-dim); padding: 0 2px; }
+.token .h { color: var(--code-seg-header); }
+.token .p { color: var(--code-seg-payload); }
+.token .s { color: var(--code-seg-sig); }
+.token .seg { border-bottom: 2px solid currentColor; padding-bottom: 2px; }
+.legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 26px; margin-top: 22px; }
+.legend span { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 12.5px; color: var(--code-text); }
+.legend i { width: 11px; height: 11px; border-radius: 3px; display: inline-block; }
+
+/* ─── Trust bar ───────────────────────────────────────── */
+.trust { padding: 20px 0; }
+.trust-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 14px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 9px 16px; border-radius: 999px;
+  border: 1px solid var(--border); background: var(--bg-panel);
+  font-size: 14px; font-weight: 550; color: var(--text-soft);
+}
+.chip svg { width: 16px; height: 16px; color: var(--good); }
+
+/* ─── Section scaffolding ─────────────────────────────── */
+.section { padding: 68px 0; }
+.section-head { max-width: 60ch; margin-bottom: 44px; }
+.section-head.center { margin-inline: auto; text-align: center; }
+.section-head h2 { font-size: clamp(1.7rem, 3.6vw, 2.35rem); letter-spacing: -0.025em; line-height: 1.12; font-weight: 700; margin-top: 10px; text-wrap: balance; }
+.section-head p { color: var(--text-soft); font-size: 1.06rem; margin-top: 14px; }
+
+/* ─── Features ────────────────────────────────────────── */
+.features { display: grid; grid-template-columns: repeat(2, 1fr); gap: 26px; }
+.feature {
+  background: var(--bg-panel); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+  display: flex; flex-direction: column;
+  transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+.feature:hover { border-color: var(--border-strong); transform: translateY(-3px); box-shadow: var(--shadow-md); }
+.feature .shot { background: var(--bg-sunken); border-bottom: 1px solid var(--border); padding: 20px; display: flex; align-items: center; justify-content: center; }
+.feature .shot img { border-radius: 10px; box-shadow: var(--shadow-md); }
+.feature .shot video { width: 340px; max-width: 100%; border-radius: 10px; box-shadow: var(--shadow-md); display: block; }
+.feature .body { padding: 22px 24px 26px; }
+.feature h3 { font-size: 1.18rem; letter-spacing: -0.01em; display: flex; align-items: center; gap: 9px; }
+.feature h3 .tag { font-family: var(--font-mono); font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 6px; background: var(--accent-soft); color: var(--accent); letter-spacing: 0; }
+.feature p { color: var(--text-soft); margin-top: 9px; font-size: 0.98rem; }
+.feature code { font-family: var(--font-mono); font-size: 0.88em; background: var(--bg-sunken); padding: 1px 5px; border-radius: 5px; color: var(--text); }
+
+/* ─── Privacy ─────────────────────────────────────────── */
+.privacy { background: var(--bg-panel); border-block: 1px solid var(--border); }
+.privacy .section-head h2 { display: inline-flex; align-items: center; gap: 12px; }
+.privacy-lock { color: var(--good); width: 34px; height: 34px; flex-shrink: 0; }
+.priv-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.priv-card { border: 1px solid var(--border); border-radius: 14px; padding: 22px 22px 24px; background: var(--bg); }
+.priv-card .k { display: flex; align-items: center; gap: 10px; font-weight: 640; font-size: 1.04rem; }
+.priv-card .k svg { width: 20px; height: 20px; color: var(--good); flex-shrink: 0; }
+.priv-card p { color: var(--text-soft); margin-top: 8px; font-size: 0.96rem; }
+.priv-card code { font-family: var(--font-mono); font-size: 0.86em; background: var(--bg-sunken); padding: 1px 5px; border-radius: 5px; }
+.perm {
+  margin-top: 26px; border: 1px solid var(--border); border-radius: 14px;
+  background: var(--bg); padding: 20px 22px;
+  display: flex; gap: 16px; align-items: flex-start;
+}
+.perm .mono { font-family: var(--font-mono); font-size: 13px; font-weight: 600; color: var(--accent); background: var(--accent-soft); padding: 4px 10px; border-radius: 8px; white-space: nowrap; }
+.perm p { color: var(--text-soft); font-size: 0.97rem; }
+.perm strong { color: var(--text); }
+
+/* ─── CTA band ────────────────────────────────────────── */
+.cta-band { text-align: center; padding: 80px 0; }
+.cta-band h2 { font-size: clamp(1.8rem, 4vw, 2.6rem); letter-spacing: -0.03em; text-wrap: balance; }
+.cta-band p { color: var(--text-soft); font-size: 1.1rem; margin-top: 14px; }
+.cta-band .hero-cta { justify-content: center; }
+
+/* ─── Footer ──────────────────────────────────────────── */
+footer { border-top: 1px solid var(--border); padding: 44px 0; color: var(--text-muted); }
+.foot-inner { display: flex; flex-wrap: wrap; gap: 22px 40px; align-items: center; justify-content: space-between; }
+.foot-brand { display: flex; align-items: center; gap: 10px; font-weight: 650; letter-spacing: -0.02em; color: var(--text); }
+.foot-brand svg { width: 26px; height: 26px; border-radius: 7px; }
+.foot-links { display: flex; flex-wrap: wrap; gap: 8px 22px; }
+.foot-links a { text-decoration: none; color: var(--text-muted); font-size: 14.5px; }
+.foot-links a:hover { color: var(--text); }
+.foot-tag { width: 100%; font-family: var(--font-mono); font-size: 12.5px; color: var(--text-faint); margin-top: 6px; }
+.foot-tag a { color: var(--text-muted); }
+
+/* ─── Video band (commits to dark in both themes - a cinema moment) ─── */
+.video-band {
+  background: radial-gradient(130% 110% at 50% -10%, #1b2540 0%, #0b1120 62%);
+  border-block: 1px solid var(--border);
+  padding: 72px 0;
+}
+.video-band .section-head { margin-bottom: 34px; }
+.video-band .eyebrow { color: #8b96b0; }
+.video-band .section-head h2 { color: #f4f7fc; }
+.video-band .section-head p { color: #b7c1d4; }
+.video-shell {
+  max-width: 900px; margin-inline: auto;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius); overflow: hidden;
+  border: 1px solid #2a3856;
+  background: #000; box-shadow: var(--shadow-lg);
+}
+.video-shell video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.video-sub { text-align: center; margin-top: 18px; font-size: 13.5px; color: #8b96b0; font-family: var(--font-mono); }
+
+/* ─── Responsive ──────────────────────────────────────── */
+@media (max-width: 860px) {
+  .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+  .hero { padding-top: 52px; }
+  .hero p.lead { max-width: none; }
+  .features, .priv-grid { grid-template-columns: 1fr; }
+  .nav-link.hide-sm { display: none; }
+}
+@media (max-width: 480px) {
+  .wrap { padding-inline: 18px; }
+  .hero-cta .btn { flex: 1 1 auto; justify-content: center; }
+}
+</style>
+<script>
+  /* Apply a saved theme choice before first paint - no flash. No stored choice
+     means "follow the OS", handled entirely in CSS. */
+  try {
+    var t = localStorage.getItem('jotscope-theme');
+    if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+  } catch (e) {}
+</script>
+</head>
+<body>
+
+<!-- ─── Nav ─────────────────────────────────────────── -->
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="#top" aria-label="Jotscope home">
+      <svg viewBox="0 0 128 128" fill="none" aria-hidden="true">
+        <rect width="128" height="128" rx="32" fill="#6366f1"/>
+        <line x1="76" y1="76" x2="99" y2="99" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+        <circle cx="53" cy="53" r="30" stroke="#fff" stroke-width="9"/>
+        <rect x="39" y="44" width="24" height="6.5" rx="3.25" fill="#fff"/>
+        <rect x="39" y="53.75" width="32" height="6.5" rx="3.25" fill="#fff"/>
+        <rect x="39" y="63.5" width="19" height="6.5" rx="3.25" fill="#fff"/>
+      </svg>
+      Jotscope
+    </a>
+    <div class="nav-spacer"></div>
+    <a class="nav-link hide-sm" href="#tour">Tour</a>
+    <a class="nav-link hide-sm" href="#features">Features</a>
+    <a class="nav-link hide-sm" href="#privacy">Privacy</a>
+    <a class="nav-link" href="https://github.com/hradecek/jotscope" target="_blank" rel="noopener">GitHub</a>
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch colour theme" title="Switch theme">
+      <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+      <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M2 12h2.4M19.6 12H22M4.9 19.1l1.7-1.7M17.4 6.6l1.7-1.7"/></svg>
+    </button>
+    <a class="btn btn-primary" href="https://chromewebstore.google.com/detail/jotscope-jwt-inspector/mklonjinblipphhognhkcjklpnkjehpe" target="_blank" rel="noopener">Add to Chrome</a>
+  </div>
+</nav>
+
+<!-- ─── Hero ────────────────────────────────────────── -->
+<header id="top" class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <p class="eyebrow rise rise-1">Chrome extension · Manifest V3 · MIT</p>
+      <h1 class="rise rise-1">Decode any JWT<br>in a blink -<br><span class="accent">it never leaves<br>your browser.</span></h1>
+      <p class="lead rise rise-2">Paste a token and Jotscope decodes it instantly into a readable, colour-coded claim view. No servers, no tracking, no network calls. The source is what ships.</p>
+      <div class="hero-cta rise rise-3">
+        <a class="btn btn-primary" href="https://chromewebstore.google.com/detail/jotscope-jwt-inspector/mklonjinblipphhognhkcjklpnkjehpe" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 5.5A4.5 4.5 0 0116.4 11H12a1 1 0 00-.87 1.5l-2.2 3.8A8 8 0 0112 7.5zM4.2 9.2l2.2 3.8A4.5 4.5 0 009.8 15l-2.2 3.8A8 8 0 014.2 9.2zM12 16.5c.5 0 1-.08 1.45-.23L15.7 20A8 8 0 0112 20a1 1 0 000-3.5z"/></svg>
+          Add to Chrome
+        </a>
+        <a class="btn btn-ghost" href="https://github.com/hradecek/jotscope" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 00-3.64 22.42c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.34-1.3-1.7-1.3-1.7-1.06-.72.08-.71.08-.71 1.17.08 1.79 1.2 1.79 1.2 1.04 1.79 2.73 1.27 3.4.97.1-.76.4-1.27.74-1.56-2.56-.29-5.26-1.28-5.26-5.7 0-1.26.45-2.29 1.19-3.1-.12-.3-.51-1.47.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 015.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.58.24 2.75.12 3.04.74.82 1.18 1.85 1.18 3.11 0 4.43-2.7 5.41-5.28 5.69.42.36.79 1.06.79 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0012 .5z"/></svg>
+          View source
+        </a>
+      </div>
+      <p class="hero-note rise rise-4"><strong>Offline by default.</strong> The only request it can make is an opt-in fetch of an issuer's public keys - off unless you turn it on.</p>
+    </div>
+
+    <div class="rise rise-3">
+      <figure class="frame">
+        <div class="frame-bar">
+          <svg viewBox="0 0 128 128" fill="none" aria-hidden="true">
+            <rect width="128" height="128" rx="32" fill="#6366f1"/>
+            <line x1="76" y1="76" x2="99" y2="99" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+            <circle cx="53" cy="53" r="30" stroke="#fff" stroke-width="9"/>
+            <rect x="39" y="44" width="24" height="6.5" rx="3.25" fill="#fff"/>
+            <rect x="39" y="53.75" width="32" height="6.5" rx="3.25" fill="#fff"/>
+            <rect x="39" y="63.5" width="19" height="6.5" rx="3.25" fill="#fff"/>
+          </svg>
+          <span class="title">Jotscope</span>
+          <span class="spacer"></span>
+          <span class="pill">paste → decode</span>
+        </div>
+        <video class="demo-video" data-clip="paste-decode" autoplay muted loop playsinline preload="metadata"
+               poster="media/clips/paste-decode-poster.jpg" width="440" height="540"
+               aria-label="Pasting a JWT and watching Jotscope decode it instantly">
+          <source src="media/clips/paste-decode.webm" type="video/webm">
+          <source src="media/clips/paste-decode.mp4" type="video/mp4">
+        </video>
+      </figure>
+    </div>
+  </div>
+</header>
+
+<!-- ─── Anatomy strip ───────────────────────────────── -->
+<section class="anatomy">
+  <div class="wrap">
+    <div class="anatomy-card">
+      <div class="anatomy-label">A JWT is three parts - Jotscope reads all of them</div>
+      <div class="token" aria-label="A JSON Web Token has three dot-separated segments: header, payload and signature">
+        <span class="h seg">eyJhbGciOiJSUzI1NiIsImtpZCI6IjA3YSJ9</span><span class="dot">.</span><span class="p seg">eyJzdWIiOiJ1c3JfODQyIiwicm9sZSI6ImFkbWluIn0</span><span class="dot">.</span><span class="s seg">SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c</span>
+      </div>
+      <div class="legend">
+        <span><i style="background:var(--code-seg-header)"></i>header - <span style="color:var(--code-dim)">alg &amp; kid</span></span>
+        <span><i style="background:var(--code-seg-payload)"></i>payload - <span style="color:var(--code-dim)">the claims</span></span>
+        <span><i style="background:var(--code-seg-sig)"></i>signature - <span style="color:var(--code-dim)">verify, don't trust</span></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Trust bar ───────────────────────────────────── -->
+<section class="trust">
+  <div class="wrap trust-row">
+    <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Offline by default</span>
+    <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>One permission</span>
+    <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Zero runtime deps</span>
+    <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>No tracking, ever</span>
+    <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Open source (MIT)</span>
+  </div>
+</section>
+
+<!-- ─── Video ───────────────────────────────────────── -->
+<section id="tour" class="video-band">
+  <div class="wrap">
+    <div class="section-head center">
+      <p class="eyebrow">See it in action</p>
+      <h2>The whole thing, in twenty seconds.</h2>
+      <p>Paste, decode, verify - a quick narrated tour. Sound on if you like.</p>
+    </div>
+    <div class="video-shell">
+      <video controls preload="metadata" playsinline poster="store/promo-poster.jpg" width="1920" height="1080">
+        <source src="store/jotscope.mp4" type="video/mp4">
+        Your browser can't play this video - <a href="store/jotscope.mp4">download the clip</a> instead.
+      </video>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Features ────────────────────────────────────── -->
+<section id="features" class="section">
+  <div class="wrap">
+    <div class="section-head center">
+      <p class="eyebrow">What it does</p>
+      <h2>Not just base64-decoded. Actually readable.</h2>
+      <p>Every claim is typed, explained, and colour-coded - the way you'd read a token if you had the time.</p>
+    </div>
+
+    <div class="features">
+
+      <article class="feature">
+        <div class="shot">
+          <picture>
+            <source data-theme-src media="(prefers-color-scheme: dark)" srcset="media/03-claims-visual-dark.png">
+            <img src="media/03-claims-visual.png" width="340" alt="Visual claim view with tooltips, chips and type colours">
+          </picture>
+        </div>
+        <div class="body">
+          <h3>Claims in plain English</h3>
+          <p>Colour-coded by type, with hover &amp; keyboard tooltips (RFC 7519 + OIDC + vendor). <code>scope</code>, <code>groups</code> and roles render as chips.</p>
+        </div>
+      </article>
+
+      <article class="feature">
+        <div class="shot">
+          <video class="demo-video" data-clip="nested-tree" autoplay muted loop playsinline preload="metadata"
+                 poster="media/clips/nested-tree-poster.jpg" width="340" height="540"
+                 aria-label="Expanding a nested claim tree in the payload">
+            <source src="media/clips/nested-tree.webm" type="video/webm">
+            <source src="media/clips/nested-tree.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="body">
+          <h3>Nested claims, unravelled</h3>
+          <p>Keycloak's <code>realm_access</code>, Firebase's <code>identities</code> and other deep payloads render as a collapsible tree - recursive, any depth - instead of a wall of JSON.</p>
+        </div>
+      </article>
+
+      <article class="feature">
+        <div class="shot">
+          <picture>
+            <source data-theme-src media="(prefers-color-scheme: dark)" srcset="media/countdown-dark.gif">
+            <img src="media/countdown.gif" width="340" alt="Token lifecycle: Valid to Expiring to Expired">
+          </picture>
+        </div>
+        <div class="body">
+          <h3>Live token lifetime</h3>
+          <p>A real-time countdown and an issued&nbsp;→&nbsp;expires bar. Watch the status shift <strong>Valid → Expiring → Expired</strong> as the clock runs down.</p>
+        </div>
+      </article>
+
+      <article class="feature">
+        <div class="shot">
+          <picture>
+            <source data-theme-src media="(prefers-color-scheme: dark)" srcset="media/09-verify-unsigned-dark.png">
+            <img src="media/09-verify-unsigned.png" width="340" alt="Signature verification with an alg:none warning">
+          </picture>
+        </div>
+        <div class="body">
+          <h3>Signature, honestly <span class="tag">opt-in JWKS</span></h3>
+          <p>Clear verification states, including a prominent warning for unsigned <code>alg: none</code> tokens. Fetching the issuer's keys is the one network call - and only when you ask.</p>
+        </div>
+      </article>
+
+      <article class="feature">
+        <div class="shot">
+          <picture>
+            <source data-theme-src media="(prefers-color-scheme: dark)" srcset="media/11-multi-token-dark.png">
+            <img src="media/11-multi-token.png" width="340" alt="Multiple tokens detected from a callback URL">
+          </picture>
+        </div>
+        <div class="body">
+          <h3>Finds tokens anywhere</h3>
+          <p>Paste a whole OAuth callback URL or a blob of text and Jotscope pulls the tokens out for you - with a picker when there's more than one.</p>
+        </div>
+      </article>
+
+      <article class="feature">
+        <div class="shot">
+          <picture>
+            <source data-theme-src media="(prefers-color-scheme: dark)" srcset="media/05-privileged-role-dark.png">
+            <img src="media/05-privileged-role.png" width="300" alt="Privileged admin role highlighted">
+          </picture>
+        </div>
+        <div class="body">
+          <h3>Privileged roles, flagged</h3>
+          <p><code>admin</code>, <code>superuser</code> or any <code>*-admin</code> is tinted and bolded, so a dangerous grant jumps out instead of hiding in the payload.</p>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── Privacy ─────────────────────────────────────── -->
+<section id="privacy" class="privacy">
+  <div class="wrap section">
+    <div class="section-head">
+      <p class="eyebrow">The whole point</p>
+      <h2>
+        <svg class="privacy-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>
+        Your tokens never leave your browser.
+      </h2>
+      <p>Tokens carry identities, sessions, and secrets. Decoding one shouldn't ship it to someone's server. Jotscope does everything locally - and the code is small, vanilla, and unminified, so you can check that yourself.</p>
+    </div>
+
+    <div class="priv-grid">
+      <div class="priv-card">
+        <div class="k"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Decoding is 100% local</div>
+        <p>Parsing and rendering happen entirely in the popup. No analytics, no telemetry, and zero runtime dependencies.</p>
+      </div>
+      <div class="priv-card">
+        <div class="k"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Clipboard, only on request</div>
+        <p>Read <strong>only</strong> when you click <em>Paste</em> or press Ctrl/Cmd+V - never on open, in the background, or on a timer.</p>
+      </div>
+      <div class="priv-card">
+        <div class="k"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Stays on your machine</div>
+        <p>History &amp; settings live in your browser's <code>localStorage</code> - never synced, never sent. Cap it, clear it, or turn it off.</p>
+      </div>
+      <div class="priv-card">
+        <div class="k"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>One opt-in network call</div>
+        <p>Signature verification <em>can</em> fetch an issuer's public JWKS - the single possible outbound request, off by default, and it sends no token data.</p>
+      </div>
+    </div>
+
+    <div class="perm">
+      <span class="mono">clipboardRead</span>
+      <p><strong>The only permission Jotscope requests.</strong> No host permissions, no <code>&lt;all_urls&gt;</code> - it can't see the pages you browse. Just the clipboard, and only on an explicit paste.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CTA band ────────────────────────────────────── -->
+<section class="cta-band">
+  <div class="wrap">
+    <h2>Made for developers who live in tokens.</h2>
+    <p>Free, open source, and offline by default. Pin it to your toolbar and never paste a JWT into a website again.</p>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href="https://chromewebstore.google.com/detail/jotscope-jwt-inspector/mklonjinblipphhognhkcjklpnkjehpe" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 5.5A4.5 4.5 0 0116.4 11H12a1 1 0 00-.87 1.5l-2.2 3.8A8 8 0 0112 7.5zM4.2 9.2l2.2 3.8A4.5 4.5 0 009.8 15l-2.2 3.8A8 8 0 014.2 9.2zM12 16.5c.5 0 1-.08 1.45-.23L15.7 20A8 8 0 0112 20a1 1 0 000-3.5z"/></svg>
+        Add to Chrome
+      </a>
+      <a class="btn btn-ghost" href="https://github.com/hradecek/jotscope" target="_blank" rel="noopener">Star on GitHub</a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Footer ──────────────────────────────────────── -->
+<footer>
+  <div class="wrap foot-inner">
+    <span class="foot-brand">
+      <svg viewBox="0 0 128 128" fill="none" aria-hidden="true">
+        <rect width="128" height="128" rx="32" fill="#6366f1"/>
+        <line x1="76" y1="76" x2="99" y2="99" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+        <circle cx="53" cy="53" r="30" stroke="#fff" stroke-width="9"/>
+        <rect x="39" y="44" width="24" height="6.5" rx="3.25" fill="#fff"/>
+        <rect x="39" y="53.75" width="32" height="6.5" rx="3.25" fill="#fff"/>
+        <rect x="39" y="63.5" width="19" height="6.5" rx="3.25" fill="#fff"/>
+      </svg>
+      Jotscope
+    </span>
+    <nav class="foot-links" aria-label="Footer">
+      <a href="https://chromewebstore.google.com/detail/jotscope-jwt-inspector/mklonjinblipphhognhkcjklpnkjehpe" target="_blank" rel="noopener">Chrome Web Store</a>
+      <a href="https://github.com/hradecek/jotscope" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://github.com/hradecek/jotscope/blob/main/PRIVACY.md" target="_blank" rel="noopener">Privacy</a>
+      <a href="https://github.com/hradecek/jotscope/blob/main/SECURITY.md" target="_blank" rel="noopener">Security</a>
+      <a href="https://github.com/hradecek/jotscope/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a>
+    </nav>
+    <p class="foot-tag">Jotscope - <a href="https://datatracker.ietf.org/doc/html/rfc7519#section-1" target="_blank" rel="noopener">it's how you say "JWT."</a> Built by <a href="https://github.com/hradecek" target="_blank" rel="noopener">@hradecek</a>.</p>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var root = document.documentElement;
+    var mq = window.matchMedia('(prefers-color-scheme: dark)');
+
+    function resolved() {
+      return root.dataset.theme || (mq.matches ? 'dark' : 'light');
+    }
+
+    /* Themed screenshots use <picture><source media="(prefers-color-scheme: dark)">,
+       which only reacts to the OS. When the user forces a theme we retune each
+       source's media query so the images follow the toggle too; in auto mode we
+       restore the original query. */
+    function syncImages() {
+      var forced = root.dataset.theme;           // 'light' | 'dark' | undefined
+      // Themed screenshots (<picture>): retune the media query to follow the toggle.
+      var sources = document.querySelectorAll('source[data-theme-src]');
+      for (var i = 0; i < sources.length; i++) {
+        if (!forced) sources[i].media = '(prefers-color-scheme: dark)';
+        else sources[i].media = (forced === 'dark') ? 'all' : 'not all';
+      }
+      // Themed demo videos: swap sources to the resolved theme's clip, then play
+      // (unless the visitor prefers reduced motion - then pause and show controls).
+      var dark = resolved() === 'dark';
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var vids = document.querySelectorAll('video[data-clip]');
+      for (var j = 0; j < vids.length; j++) {
+        var v = vids[j], clip = v.dataset.clip, suf = dark ? '-dark' : '';
+        if (v.dataset.cur !== suf) {
+          v.dataset.cur = suf;
+          var s = v.querySelectorAll('source');
+          s[0].src = 'media/clips/' + clip + suf + '.webm';
+          s[1].src = 'media/clips/' + clip + suf + '.mp4';
+          v.poster = 'media/clips/' + clip + suf + '-poster.jpg';
+          v.load();
+        }
+        if (reduce) { v.controls = true; try { v.pause(); } catch (e) {} }
+        else { v.controls = false; var pr = v.play(); if (pr && pr.catch) pr.catch(function () {}); }
+      }
+    }
+
+    var btn = document.getElementById('themeToggle');
+    btn.addEventListener('click', function () {
+      var next = resolved() === 'dark' ? 'light' : 'dark';
+      root.dataset.theme = next;
+      try { localStorage.setItem('jotscope-theme', next); } catch (e) {}
+      syncImages();
+    });
+
+    /* Keep images correct if the OS theme changes while we're in auto mode. */
+    mq.addEventListener('change', syncImages);
+
+    syncImages();
+  })();
+</script>
+
+</body>
+</html>

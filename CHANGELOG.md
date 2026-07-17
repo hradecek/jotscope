@@ -12,9 +12,9 @@ Initial public release.
 
 ### Features
 
-- Offline JWT decode, inspect, and verify — everything runs locally, no network calls, no telemetry.
+- Offline JWT decode, inspect, and verify - everything runs locally, no network calls, no telemetry.
 - Visual claims tree: typed values, timestamp formatting, nested objects, array chips, and privileged-role flagging.
 - Multi-token detection from a pasted URL or blob (e.g. OAuth callback fragments).
-- Local history of recently decoded tokens — deduped, capped, disable-able, and clearable in Settings.
+- Local history of recently decoded tokens - deduped, capped, disable-able, and clearable in Settings.
 - Signature checks with `alg: none` / weak-algorithm warnings and an optional, opt-in JWKS fetch.
 - Light and dark themes.

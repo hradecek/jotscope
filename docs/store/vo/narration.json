@@ -1,0 +1,41 @@
+{
+  "fps": 30,
+  "lines": [
+    {
+      "id": "01",
+      "t0": 0,
+      "t1": 3,
+      "text": "Meet Jotscope. <break time=\"0.4s\" /> A JWT inspector."
+    },
+    {
+      "id": "02",
+      "t0": 3,
+      "t1": 6.62,
+      "text": "Paste any token, and it is decoded instantly."
+    },
+    {
+      "id": "03",
+      "t0": 6.62,
+      "t1": 9.63,
+      "text": "Every claim in a clean, readable tree."
+    },
+    {
+      "id": "04",
+      "t0": 9.63,
+      "t1": 12.52,
+      "text": "It flags unsigned and weak-algorithm tokens."
+    },
+    {
+      "id": "05",
+      "t0": 12.52,
+      "t1": 16.27,
+      "text": "And it all runs offline. <break time=\"0.3s\" /> No servers, no tracking."
+    },
+    {
+      "id": "06",
+      "t0": 16.27,
+      "t1": 19.27,
+      "text": "Jotscope. Free and open source."
+    }
+  ]
+}
