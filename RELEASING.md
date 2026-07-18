@@ -1,8 +1,8 @@
 # Releasing
 
 Version bumps and the changelog are handled by
-[release-please](https://github.com/googleapis/release-please) — you never edit
-them by hand — but **releases are triggered manually**. Merging feature/fix PRs
+[release-please](https://github.com/googleapis/release-please) - you never edit
+them by hand - but **releases are triggered manually**. Merging feature/fix PRs
 does *not* start a release; you decide when to cut one.
 
 ## The flow
@@ -30,18 +30,18 @@ does *not* start a release; you decide when to cut one.
    version stays live until Google approves the new one.
 
 Build the package locally anytime with `npm run build:zip` → `dist/jotscope.zip`
-(an allowlist of just the runtime files — no docs, tests, or scripts).
+(an allowlist of just the runtime files - no docs, tests, or scripts).
 
 ## Chrome Web Store secrets
 
 Add these as repository secrets (Settings → Secrets and variables → Actions).
-Until they exist, the store step is skipped — releases still get the zip attached.
+Until they exist, the store step is skipped - releases still get the zip attached.
 
-| Secret | Where it comes from |
-| --- | --- |
-| `CWS_EXTENSION_ID` | The extension's ID in the Web Store dashboard |
-| `CWS_CLIENT_ID` | Google Cloud OAuth client (Chrome Web Store API enabled) |
-| `CWS_CLIENT_SECRET` | Same OAuth client |
+| Secret              | Where it comes from                                       |
+|---------------------|-----------------------------------------------------------|
+| `CWS_EXTENSION_ID`  | The extension's ID in the Web Store dashboard             |
+| `CWS_CLIENT_ID`     | Google Cloud OAuth client (Chrome Web Store API enabled)  |
+| `CWS_CLIENT_SECRET` | Same OAuth client                                         |
 | `CWS_REFRESH_TOKEN` | Generated once via the OAuth consent flow for that client |
 
 See the [Chrome Web Store API docs](https://developer.chrome.com/docs/webstore/using-api)
@@ -51,5 +51,5 @@ for generating the OAuth client and refresh token. The upload uses
 > The workflow uploads a **draft only** (no `--auto-publish`), so you always
 > get a final look before submitting for review. To fully automate instead,
 > add `--auto-publish` to the upload step in
-> `.github/workflows/release-please.yml` — it will then submit for review and
+> `.github/workflows/release-please.yml` - it will then submit for review and
 > publish on approval with no manual step.

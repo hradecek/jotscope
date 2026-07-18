@@ -1,7 +1,7 @@
 name: PR title
 
 # With squash-only merges, GitHub uses the PR title as the commit message on
-# main — which is exactly what release-please reads to decide the version bump
+# main - which is exactly what release-please reads to decide the version bump
 # and changelog. So the PR title must be a Conventional Commit (feat:, fix:, …).
 on:
   pull_request:

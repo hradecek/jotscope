@@ -27,3 +27,9 @@ Thumbs.db
 
 # Temp frame captures for GIF assembly (docs/media/*.png|gif ARE committed)
 docs/media/.frames/
+
+# Web Store promo video intermediates (the final promo-video.mp4 IS committed;
+# the per-line voiceover mp3s are regenerable and already muxed into the video)
+docs/store/vo/*.mp3
+docs/store/.video-*
+docs/store/.debug-rec.webm

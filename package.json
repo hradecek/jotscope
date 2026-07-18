@@ -8,6 +8,9 @@
     "test": "playwright test",
     "gen:tokens": "node scripts/gen-test-tokens.js",
     "gen:media": "node scripts/gen-test-tokens.js && node scripts/gen-screenshots.js",
+    "gen:store": "node scripts/gen-test-tokens.js && node scripts/gen-store-screenshots.js",
+    "gen:video": "node scripts/gen-test-tokens.js && node scripts/gen-video.js",
+    "gen:vo": "node scripts/gen-vo.js",
     "build:zip": "node scripts/build-zip.js"
   },
   "keywords": [
